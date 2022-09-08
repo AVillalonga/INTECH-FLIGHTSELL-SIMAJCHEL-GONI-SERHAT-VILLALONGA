@@ -2,5 +2,8 @@
   "name": "api",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {}
+  "scripts": {},
+  "dependencies": {
+    "fastify": "^4.5.3"
+  }
 }
