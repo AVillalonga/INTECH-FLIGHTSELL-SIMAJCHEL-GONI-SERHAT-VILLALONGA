@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model flights {
+  id_flights                                  Int       @id @default(autoincrement())
+  ref                                         String    @db.VarChar(128)
+  departure_id                                Int
+  destination_id                              Int
+  price                                       String    @db.VarChar(1024)
+  disponibility                               Int
+  locations_flights_departure_idTolocations   locations @relation("flights_departure_idTolocations", fields: [departure_id], references: [id_locations], onUpdate: Restrict, map: "flights_ibfk_1")
+  locations_flights_destination_idTolocations locations @relation("flights_destination_idTolocations", fields: [destination_id], references: [id_locations], onUpdate: Restrict, map: "flights_ibfk_2")
+  tickets                                     tickets[]
+
+  @@index([departure_id], map: "departure_id")
+  @@index([destination_id], map: "destination_id")
+}
+
+model locations {
+  id_locations                              Int       @id @default(autoincrement())
+  name                                      String    @db.VarChar(1024)
+  flights_flights_departure_idTolocations   flights[] @relation("flights_departure_idTolocations")
+  flights_flights_destination_idTolocations flights[] @relation("flights_destination_idTolocations")
+}
+
+model orders {
+  id_orders Int       @id @default(autoincrement())
+  id_users  Int
+  users     users     @relation(fields: [id_users], references: [id_users], onUpdate: Restrict, map: "orders_ibfk_1")
+  tickets   tickets[]
+
+  @@index([id_users], map: "id_users")
+}
+
+model tickets {
+  id_tickets  Int      @id @default(autoincrement())
+  id_flights  Int
+  id_orders   Int
+  ticket_date DateTime @db.Timestamp(0)
+  flights     flights  @relation(fields: [id_flights], references: [id_flights], onUpdate: Restrict, map: "tickets_ibfk_1")
+  orders      orders   @relation(fields: [id_orders], references: [id_orders], onUpdate: Restrict, map: "tickets_ibfk_2")
+
+  @@index([id_flights], map: "id_flights")
+  @@index([id_orders], map: "id_orders")
+}
+
+model users {
+  id_users Int      @id @default(autoincrement())
+  name     String   @db.VarChar(128)
+  mail     String   @db.VarChar(255)
+  password String   @db.VarChar(1024)
+  orders   orders[]
+}
