@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {},
   "dependencies": {
-    "fastify": "^4.5.3"
+    "fastify": "^4.5.3",
+    "@prisma/client": "^4.3.1"
   }
 }
