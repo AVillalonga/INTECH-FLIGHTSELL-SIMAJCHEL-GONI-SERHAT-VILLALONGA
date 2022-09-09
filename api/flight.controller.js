@@ -39,8 +39,6 @@ async function routes(fastify) {
         for (const schema of schemas) fastify.addSchema(schema);
     }
 
-    loadSchemas(fastify);
-
     function loadRoutes(fastify) {
         const routes = [
             {
@@ -90,6 +88,9 @@ async function routes(fastify) {
 
         for (const route of routes) fastify.route(route);
     }
+    
+    loadSchemas(fastify);
+    loadRoutes(fastify);
 }
 
 module.exports = routes;
