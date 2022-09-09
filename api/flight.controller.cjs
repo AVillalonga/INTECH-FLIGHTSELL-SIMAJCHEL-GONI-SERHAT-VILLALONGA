@@ -66,23 +66,29 @@ async function flightController(fastify) {
                     },
                 },
                 handler: async (request, reply) => {
-                    const {ref, name, mail} = request.body
+                    const {ref, user_name, user_mail} = request.body
+                    /*const resultflight = await prisma.flights.findUnique({
+                        where: {
+                            ref: ref,
+                        },
+                    })*/
                     const resultUser = await prisma.users.create({
                         data: {
-                            name,
-                            mail
+                            name: user_name,
+                            mail: user_mail,
+                            password: 'test'
                         }
                     })
-                    const idUser = resultUser.id
                     const resultOrder = await prisma.orders.create({
                         data:{
-                            idUser
+                            id_users: resultUser.id_users
                         }
                     })
-                    const idOrder = resultOrder.id
                     const resultTicket = await prisma.tickets.create({
                         data:{
-                            idOrder
+                            id_orders : resultOrder.id_orders,
+                            id_flights: 1,
+                            ticket_date: Date.now()
                         }
                     })
                     reply.send(resultUser,resultOrder,resultTicket)
