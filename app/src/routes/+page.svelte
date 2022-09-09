@@ -8,14 +8,14 @@
         <select bind:value={selected} class="form-select" >
             {#each $flights as flight}
                 <option value={flight}>
-                    {flight.name}
+                    {flight.departureName} - {flight.arrivalName}  {flight.price}€
                 </option>
             {/each}
         </select>
         <br>
     
         <ul class="list-group">
-            {#each selected ? selected.options : [] as { option, price, checked }, i}
+            {#each selected ? selected.option : [] as { option, price, checked }, i}
                 <label class="list-group-item">
                     <input class="form-check-input me-1" type=checkbox bind:checked={checked}>
                     {option} for {price} euros
@@ -44,13 +44,14 @@
     let all_flights;
     onMount(async () => {
         const response = await fetch(
-            'http://localhost:64963/flights',
+            'http://localhost:3000/flights',
             {
                 method: 'GET'
             },
         );
         const data = await response.json();
-        all_flights = data;
+        $flights = data.flights;
+        all_flights = data
         console.log(all_flights)
     });
     // Data
