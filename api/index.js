@@ -29,19 +29,9 @@ async function bootFastify() {
     const fastify = Fastify({
         logger: true,
     });
-<<<<<<< HEAD
-
-    fastify.register((fastify, options, done) => {
-        fastify.register(cors, {
-            origin: "http://localhost:5173",
-        });
-        
-        done();
-=======
     
     fastify.register(cors, {
         origin: "http://localhost:5173",
->>>>>>> 037cf78 (fix: cors with available origin)
     });
 
     fastify.register(flightController);
