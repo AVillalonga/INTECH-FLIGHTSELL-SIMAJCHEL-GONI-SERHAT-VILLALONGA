@@ -40,6 +40,45 @@
     fastify.register(require('@fastify/mysql'), {
         connectionString: 'mysql://root@localhost/mysql'
     })*/
+    fastify.addSchema({
+        $id: "orderSchema",
+        type: 'object',
+        properties:{
+            ref: {type: 'string'},
+            user_name: {type: 'string'},
+            user_mail: {type: 'string'},
+            allerRetour: {type: 'boolean'},
+            option: {type: 'boolean'}
+        }
+    })
+    fastify.addSchema({
+        $id: "flightContractSchema",
+        type: 'object',
+        properties: {
+            ref1: {type: 'string'},
+            departureName: {type : 'string'},
+            arrivalName: {type: 'string'},
+            price: {type: 'string'} 
+        }
+    })
+    fastify.route({
+        method: 'POST',
+        url: '/validation',
+        schema: {
+            body: {$ref : 'orderSchema#'},
+            response: {
+                200: {
+                    type: 'object',
+                    properties: {
+                        response: {type:'string'}
+                    }
+                }
+            }
+        },
+        handler: async (request, reply) => {
+            return {response: 'Billets achetés '}
+        }
+    })
     fastify.route({
         method: 'GET',
         url: '/flights',
@@ -48,13 +87,11 @@
             200: {
                 type: 'object',
                 properties: {
-                flight: { ref1: {type: 'string'},departureName: {type : 'string'},
+                ref1: {type: 'string'},
+                departureName: {type : 'string'},
                 arrivalName: {type: 'string'},
                 price: {type: 'string'} 
-                
                 },
-                   
-                }
             }
             }
         },
