@@ -8,7 +8,7 @@
         <select bind:value={selected} class="form-select" >
             {#each $flights as flight}
                 <option value={flight}>
-                    {flight.name}
+                    {flight.departureName} - {flight.arrivalName}  {flight.price}€
                 </option>
             {/each}
         </select>
@@ -39,23 +39,9 @@
     import { writable } from 'svelte/store';
     import { goto } from '$app/navigation';
     import { flights, savedFlight } from '../store.js';
-    import { onMount } from 'svelte';
-
-    let all_flights;
-    onMount(async () => {
-        const response = await fetch(
-            'http://localhost:64963/flights',
-            {
-                method: 'GET'
-            },
-        );
-        const data = await response.json();
-        all_flights = data;
-        console.log(all_flights)
-    });
     // Data
 
-	let selected;
+	let selected;   
 
     // Computed
 

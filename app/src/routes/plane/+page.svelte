@@ -23,9 +23,9 @@
 
 <h6>Plane are : </h6>
 <ul class="list-group">
-	{#each flights as { id, name}, i}
+	{#each flights as flight}
 		<li class="list-group-item">
-            {name}
+            {flight.departureName} - {flight.arrivalName}  {flight.price}€
         </li>
 	{/each}
 </ul>

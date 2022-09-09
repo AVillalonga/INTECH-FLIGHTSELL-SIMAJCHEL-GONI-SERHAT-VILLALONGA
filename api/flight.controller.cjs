@@ -13,9 +13,9 @@ const prisma = new PrismaClient()
  */
 async function flightController(fastify) {
     // Connection to Database
-    fastify.register(require('@fastify/mysql'), {
-        connectionString: 'mysql://root:MySQL@localhost:3306/flight_sell'
-    })
+    // fastify.register(require('@fastify/mysql'), {
+    //     connectionString: 'mysql://root:MySQL@localhost:3306/flight_sell'
+    // })
 
     /**
      * Contain and synchronize all schema of flight controller

@@ -1,19 +1,19 @@
 import { writable } from 'svelte/store'
 
-export const savedFlight = writable([]);
-export const flights = writable([
-    { id: 1, name: `FLIGHT1`, options: [
+export let savedFlight = writable([]);
+export let flights = writable((await all_flights()))
+
+
+
+export async function all_flights() {
+    const response = await fetch(
+        'http://localhost:3000/flightall',
         {
-            "option": "Champagne",
-            "price" : 100,
-            "checked": false
+            method: 'GET'
         },
-        {
-            "option": "Frites",
-            "price" : 10,
-            "checked": true
-        }
-    ]},
-    { id: 2, name: `FLIGHT2`, options: []},
-    { id: 3, name: `FLIGHT3`, options: []}
-]);
+    );
+    return (await response.json());
+
+}
+
+
