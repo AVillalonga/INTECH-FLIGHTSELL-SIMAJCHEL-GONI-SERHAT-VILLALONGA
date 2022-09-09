@@ -14,8 +14,8 @@ model flights {
   destination_id                              Int
   price                                       String    @db.VarChar(1024)
   disponibility                               Int
-  locations_flights_departure_idTolocations   locations @relation("flights_departure_idTolocations", fields: [departure_id], references: [id_locations], onUpdate: Restrict, map: "flights_ibfk_1")
-  locations_flights_destination_idTolocations locations @relation("flights_destination_idTolocations", fields: [destination_id], references: [id_locations], onUpdate: Restrict, map: "flights_ibfk_2")
+  locations_flights_departure_idTolocations   locations @relation("flights_departure_idTolocations", fields: [departure_id], references: [id_locations], onDelete: NoAction, onUpdate: NoAction, map: "flights_ibfk_1")
+  locations_flights_destination_idTolocations locations @relation("flights_destination_idTolocations", fields: [destination_id], references: [id_locations], onDelete: NoAction, onUpdate: NoAction, map: "flights_ibfk_2")
   tickets                                     tickets[]
 
   @@index([departure_id], map: "departure_id")
@@ -32,7 +32,7 @@ model locations {
 model orders {
   id_orders Int       @id @default(autoincrement())
   id_users  Int
-  users     users     @relation(fields: [id_users], references: [id_users], onUpdate: Restrict, map: "orders_ibfk_1")
+  users     users     @relation(fields: [id_users], references: [id_users], onDelete: NoAction, onUpdate: NoAction, map: "orders_ibfk_1")
   tickets   tickets[]
 
   @@index([id_users], map: "id_users")
@@ -43,8 +43,8 @@ model tickets {
   id_flights  Int
   id_orders   Int
   ticket_date DateTime @db.Timestamp(0)
-  flights     flights  @relation(fields: [id_flights], references: [id_flights], onUpdate: Restrict, map: "tickets_ibfk_1")
-  orders      orders   @relation(fields: [id_orders], references: [id_orders], onUpdate: Restrict, map: "tickets_ibfk_2")
+  flights     flights  @relation(fields: [id_flights], references: [id_flights], onDelete: NoAction, onUpdate: NoAction, map: "tickets_ibfk_1")
+  orders      orders   @relation(fields: [id_orders], references: [id_orders], onDelete: NoAction, onUpdate: NoAction, map: "tickets_ibfk_2")
 
   @@index([id_flights], map: "id_flights")
   @@index([id_orders], map: "id_orders")
