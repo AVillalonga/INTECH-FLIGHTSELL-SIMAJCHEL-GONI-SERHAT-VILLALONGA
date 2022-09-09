@@ -67,20 +67,22 @@ async function flightController(fastify) {
                         200: {
                             type: "object",
                             properties: {
-                                ref1: { type: "string" },
-                                departureName: { type: "string" },
-                                arrivalName: { type: "string" },
-                                price: { type: "string" },
+                                flights: { type: "array" }
                             },
                         },
                     },
                 },
                 handler: async (request, reply) => {
                     return {
-                        ref1: "A3456",
-                        departureName: "CDG",
-                        arrivalName: "JFK",
-                        price: "17",
+                        flights: [
+                            {
+                                ref1: "A3456",
+                                departureName: "CDG",
+                                arrivalName: "JFK",
+                                price: "17",
+                                option: []
+                            }
+                        ]
                     };
                 },
             },

@@ -39,8 +39,6 @@ async function bootFastify() {
  * @param {Fastify} fastify
  */
 function startServer(fastify) {
-    console.log(fastify);
-
     fastify.listen({ port: process.env.FASTIFY_PORT }, function (err, address) {
         if (err) {
             fastify.log.error(err);
