@@ -30,7 +30,13 @@ async function bootFastify() {
         logger: true,
     });
 
-    fastify.register(cors);
+    fastify.register((fastify, options, done) => {
+        fastify.register(cors, {
+            origin: "http://localhost:5173",
+        });
+        
+        done();
+    });
 
     fastify.register(flightController);
 
