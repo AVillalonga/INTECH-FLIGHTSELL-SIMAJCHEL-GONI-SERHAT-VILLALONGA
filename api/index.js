@@ -29,9 +29,16 @@ async function bootFastify() {
     const fastify = Fastify({
         logger: true,
     });
-    
+
     fastify.register(cors, {
-        origin: "http://localhost:5173",
+        origin: (origin, cb) => {
+            const hostname = new URL(origin).hostname;
+            if (hostname === "localhost" || hostname === "127.0.0.1") {
+                cb(null, true);
+                return;
+            }
+            cb(new Error("Not allowed"), false);
+        },
     });
 
     fastify.register(flightController);
