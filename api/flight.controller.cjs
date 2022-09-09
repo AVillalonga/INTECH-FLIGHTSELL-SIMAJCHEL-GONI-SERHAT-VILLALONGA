@@ -30,8 +30,8 @@ async function flightController(fastify) {
                     ref: { type: "string" },
                     user_name: { type: "string" },
                     user_mail: { type: "string" },
-                    allerRetour: { type: "boolean" },
-                    option: { type: "boolean" },
+                    //allerRetour: { type: "boolean" },
+                    //option: { type: "boolean" },
                 },
             },
             {
@@ -66,10 +66,26 @@ async function flightController(fastify) {
                     },
                 },
                 handler: async (request, reply) => {
-                    fastify.mysql.query(
-                        'INSERT into users (name,mail,password) VALUES (?,?,password)', [request.body.user_name, request.body.user_mail]
-                    )
-                    return { response: "Billets achetés " };
+                    const {ref, name, mail} = request.body
+                    const resultUser = await prisma.users.create({
+                        data: {
+                            name,
+                            mail
+                        }
+                    })
+                    const idUser = resultUser.id
+                    const resultOrder = await prisma.orders.create({
+                        data:{
+                            idUser
+                        }
+                    })
+                    const idOrder = resultOrder.id
+                    const resultTicket = await prisma.tickets.create({
+                        data:{
+                            idOrder
+                        }
+                    })
+                    reply.send(resultUser,resultOrder,resultTicket)
                 },
             },
             {
@@ -106,29 +122,20 @@ async function flightController(fastify) {
           }
         }
       }
-      fastify.get('/flightList', function(req, reply) {
-        fastify.mysql.query(
-          'SELECT * from flights',
-          function onResult (err, result) {
-            reply.send(err || result)
-          }
-        )
-      })
-    // Test route for connection
-      fastify.get('/flightall', function(req, reply) {
-        const flights = prisma.flights.findMany()
+      fastify.get('/flightall', async function(req, reply) {
+        const flights = await prisma.flights.findMany()
         const flightsContracts = []
-        /*for (const flight of flights){
-            const flightDeparture = prisma.locations.findUnique({where: {id_locations : flight.departure_id}})
-            const flightDestination = prisma.locations.findUnique({where: {id_locations : flight.destination_id}})
+        for (const flight of flights){
+            const flightDeparture = await prisma.locations.findUnique({where: {id_locations : flight.departure_id}})
+            const flightDestination = await prisma.locations.findUnique({where: {id_locations : flight.destination_id}})
             flightsContracts.push({
                 ref1: flight.ref,
-                departureName: flightDeparture,
-                arrivalName: flightDestination,
+                departureName: flightDeparture.name,
+                arrivalName: flightDestination.name,
                 price: flight.price
             });
-        }   */
-        reply.send(flights)
+        }  
+        reply.send(flightsContracts)
       })
     
     loadSchemas(fastify);
