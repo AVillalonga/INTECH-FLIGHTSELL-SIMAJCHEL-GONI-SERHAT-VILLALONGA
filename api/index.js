@@ -20,16 +20,19 @@ async function bootPrisma() {
 }
 
 /**
- * Create Fastify instance
+ *  * Create Fastify instance
  * @returns {Fastify}
+ * @type {import('fastify').FastifyInstance} Instance of Fastify
  */
 async function bootFastify() {
     const fastify = Fastify({
         logger: true,
     });
-    // flightController(fastify);
+    fastify.register(flightController)
+    
     return fastify;
 }
+
 
 /**
  * Configure and run fastify
