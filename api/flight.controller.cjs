@@ -6,7 +6,7 @@
  * Encapsulates the routes
  * @param {FastifyInstance} fastify  Encapsulated Fastify Instance
  */
-async function routes(fastify) {
+async function flightController(fastify) {
     /**
      * Contain and synchronize all schema of flight controller
      * @param {FastifyInstance} fastify
@@ -93,4 +93,4 @@ async function routes(fastify) {
     loadRoutes(fastify);
 }
 
-module.exports = routes;
+module.exports = flightController;
