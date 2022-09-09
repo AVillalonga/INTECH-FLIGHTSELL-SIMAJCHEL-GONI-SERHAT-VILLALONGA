@@ -1,11 +1,11 @@
-CREATE table `locations`
+CREATE TABLE `locations`
 (
     id_locations int not null auto_increment primary key,
     name varchar(1024) not null
 );
 
 
-create table `flights`
+create TABLE `flights`
 (
     id_flights int not null auto_increment primary key,
     ref varchar(128) not null,
@@ -17,7 +17,7 @@ create table `flights`
     foreign key (destination_id) references locations(id_locations)
 );
 
-create table `users`
+create TABLE `users`
 (
     id_users int not null auto_increment primary key,
     name varchar(128) not null,
@@ -25,14 +25,14 @@ create table `users`
     password varchar(1024) not null
 );
 
-create table `orders`
+create TABLE `orders`
 (
     id_orders int not null auto_increment primary key,
     id_users int not null,
     foreign key (id_users) references users(id_users)
 );
 
-create table `tickets`
+create TABLE `tickets`
 (
     id_tickets int not null auto_increment primary key,
     id_flights int not null,

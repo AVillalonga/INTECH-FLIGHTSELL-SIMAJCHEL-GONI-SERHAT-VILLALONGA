@@ -1,6 +1,7 @@
 import Fastify from "fastify";
 import { PrismaClient } from "@prisma/client";
 import { config } from "dotenv";
+import cors from "@fastify/cors";
 import flightController from "./flight.controller.cjs";
 
 config();
@@ -28,19 +29,21 @@ async function bootFastify() {
     const fastify = Fastify({
         logger: true,
     });
-    fastify.register(flightController)
     
+    fastify.register(cors, {
+        origin: "http://localhost:5173",
+    });
+
+    fastify.register(flightController);
+
     return fastify;
 }
-
 
 /**
  * Configure and run fastify
  * @param {Fastify} fastify
  */
 function startServer(fastify) {
-    console.log(fastify);
-
     fastify.listen({ port: process.env.FASTIFY_PORT }, function (err, address) {
         if (err) {
             fastify.log.error(err);

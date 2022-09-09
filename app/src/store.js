@@ -1,4 +1,19 @@
-import { writable } from 'svelte/store';
+import { writable } from 'svelte/store'
 
-//4
-export const savedFlight = writable(0);
+export const savedFlight = writable([]);
+export const flights = writable([
+    { id: 1, name: `FLIGHT1`, options: [
+        {
+            "option": "Champagne",
+            "price" : 100,
+            "checked": false
+        },
+        {
+            "option": "Frites",
+            "price" : 10,
+            "checked": true
+        }
+    ]},
+    { id: 2, name: `FLIGHT2`, options: []},
+    { id: 3, name: `FLIGHT3`, options: []}
+]);

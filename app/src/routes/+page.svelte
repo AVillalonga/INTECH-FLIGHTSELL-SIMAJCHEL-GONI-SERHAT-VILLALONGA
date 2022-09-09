@@ -1,78 +1,80 @@
+
+<div class="container">
+    <h2>Chose planes</h2>
+    <!-- <h2><p>Chosed flight {selected ? selected.text : ''}</p></h2> -->
+    <h5><p>Cart size {$savedFlight.length}</p></h5>
+    
+    <form on:submit|preventDefault={addToCart}>
+        <select bind:value={selected} class="form-select" >
+            {#each $flights as flight}
+                <option value={flight}>
+                    {flight.name}
+                </option>
+            {/each}
+        </select>
+        <br>
+    
+        <ul class="list-group">
+            {#each selected ? selected.options : [] as { option, price, checked }, i}
+                <label class="list-group-item">
+                    <input class="form-check-input me-1" type=checkbox bind:checked={checked}>
+                    {option} for {price} euros
+                </label>
+            {/each}
+        </ul>
+    
+        <button type=submit class="btn btn-secondary">
+            Add to cart
+        </button>
+    </form>
+    
+    <br>
+    <button class="btn btn-success" disabled={$savedFlight.length === 0} on:click={handleSubmit}>Validate cart</button>
+    <button class="btn btn-danger" disabled={$savedFlight.length === 0} on:click={cleanCart}>Empty cart</button>
+    
+</div>
+    
+
 <script>
     import { writable } from 'svelte/store';
     import { goto } from '$app/navigation';
-    import { savedFlight } from '../store.js';
+    import { flights, savedFlight } from '../store.js';
+    import { onMount } from 'svelte';
 
-	let questions = [
-		{ id: 1, name: `FLIGHT1`, options: [
+    let all_flights;
+    onMount(async () => {
+        const response = await fetch(
+            'http://localhost:64963/flights',
             {
-                "option": "Champagne",
-                "price" : 100,
-                "selected": false
+                method: 'GET'
             },
-            {
-                "option": "Frites",
-                "price" : 10,
-                "selected": true
-            }
-        ]},
-		{ id: 2, name: `FLIGHT2`, options: []},
-		{ id: 3, name: `FLIGHT3`, options: []}
-	];
+        );
+        const data = await response.json();
+        all_flights = data;
+        console.log(all_flights)
+    });
+    // Data
 
 	let selected;
-    let cart = [];
+
+    // Computed
+
+    const addToCart = () => {
+		$savedFlight = [...$savedFlight, selected];
+	};
+
+    const cleanCart = () => {
+        $savedFlight = [];
+    };
+
+    // Method
 
 	function handleSubmit() {
-        savedFlight.set(cart)
+        console.log($savedFlight)
         goto("/plane")
     }
 
-    function addToCart() {
-        cart = [...cart, selected];
-    }
-
-    function emptyCart() {
-        cart = [];
-    }
 </script>
-
-<div class="container">
-
-<h2>Chose planes</h2>
-<!-- <h2><p>Chosed flight {selected ? selected.text : ''}</p></h2> -->
-<h5><p>Cart size {cart.length}</p></h5>
-
-
-<form on:submit|preventDefault={addToCart}>
-	<select bind:value={selected} class="form-select" >
-		{#each questions as question}
-			<option value={question}>
-				{question.name}
-			</option>
-		{/each}
-	</select>
-    <br>
-
-    <ul class="list-group">
-        {#each selected ? selected.options : [] as { option, price }, i}
-            <label class="list-group-item">
-                <input class="form-check-input me-1" type=checkbox bind:checked={selected}>
-                {option} for {price} euros
-            </label>
-        {/each}
-    </ul>
-
-	<button type=submit class="btn btn-secondary">
-		Add to cart
-	</button>
-</form>
-
-<br>
-<button class="btn btn-success" disabled={cart.length == 0} on:click={handleSubmit}>Validate cart</button>
-<button class="btn btn-danger" disabled={cart.length == 0} on:click={emptyCart}>Empty cart</button>
-
-</div>
 
 <style>
     .container {
