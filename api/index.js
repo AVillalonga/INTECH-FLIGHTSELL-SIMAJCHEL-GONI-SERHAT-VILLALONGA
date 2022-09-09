@@ -6,13 +6,21 @@ import flightController from "./flight.controller.js";
 // Boot
 // ****************************
 
-require('dotenv').config()
+require("dotenv").config();
 
+/**
+ * Create Prisma instance
+ * @returns {PrismaClient}
+ */
 async function bootPrisma() {
     const prisma = new PrismaClient();
     return prisma;
 }
 
+/**
+ * Create Fastify instance
+ * @returns {Fastify}
+ */
 async function bootFastify() {
     const fastify = Fastify({
         logger: true,
@@ -22,6 +30,10 @@ async function bootFastify() {
     return fastify;
 }
 
+/**
+ * Configure and run fastify
+ * @param {Fastify} fastify
+ */
 function startServer(fastify) {
     fastify.listen({ port: process.env.FASTIFY_PORT }, function (err, address) {
         if (err) {
