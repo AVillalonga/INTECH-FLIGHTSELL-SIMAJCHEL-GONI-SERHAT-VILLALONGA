@@ -14,6 +14,7 @@ require("dotenv").config();
  */
 async function bootPrisma() {
     const prisma = new PrismaClient();
+
     return prisma;
 }
 
@@ -25,7 +26,6 @@ async function bootFastify() {
     const fastify = Fastify({
         logger: true,
     });
-
     flightController(fastify);
     return fastify;
 }
@@ -50,5 +50,8 @@ function startServer(fastify) {
 (() => {
     const __FASTIFY__ = bootFastify();
     const __PRISMA__ = bootPrisma();
+
+    __FASTIFY__.__PRISMA__ = __PRISMA__;
+
     startServer(__FASTIFY__);
 })();
