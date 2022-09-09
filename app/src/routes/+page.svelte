@@ -5,7 +5,7 @@
     <h5><p>Cart size {$savedFlight.length}</p></h5>
     
     <form on:submit|preventDefault={addToCart}>
-        <select bind:value={selected} class="form-select" >
+        <select bind:value={selected} class="form-select">
             {#each $flights as flight}
                 <option value={flight}>
                     {flight.departureName} - {flight.arrivalName}  {flight.price}€
@@ -33,10 +33,8 @@
     <button class="btn btn-danger" disabled={$savedFlight.length === 0} on:click={cleanCart}>Empty cart</button>
     
 </div>
-    
 
 <script>
-    import { writable } from 'svelte/store';
     import { goto } from '$app/navigation';
     import { flights, savedFlight } from '../store.js';
     import { onMount } from 'svelte';
