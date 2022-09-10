@@ -3,8 +3,6 @@ import { writable } from 'svelte/store'
 export let savedFlight = writable([]);
 export let flights = writable((await all_flights()))
 
-
-
 export async function all_flights() {
     const response = await fetch(
         'http://localhost:3000/flightall',
@@ -13,7 +11,36 @@ export async function all_flights() {
         },
     );
     return (await response.json());
-
 }
+export async function send_user(username, usermail) {
+    
+    const response = await fetch(
+        'http://localhost:3000/usercreate',
+        {
+            method: 'POST',
+            body: JSON.stringify({
+                user_name : username,
+                user_mail : usermail
+            })
+        },
+    );
+    return (await response.json());
+}
+
+export async function send_order(flights, user) {
+    
+    const response = await fetch(
+        'http://localhost:3000/createOrderAndTicket',
+        {
+            method: 'POST',
+            body: JSON.stringify({
+                user : user,
+                flights : flights
+            })
+        },
+    );
+    return (await response.json());
+}
+
 
 
