@@ -1,11 +1,14 @@
 import Fastify from "fastify";
 import { PrismaClient } from "@prisma/client";
-import { config } from "dotenv";
 import cors from "@fastify/cors";
-import flightController from "./flight.controller.cjs";
-import nodeMailController from "./nodemailController.cjs"
+import { config as dotEnvConfig } from "dotenv";
+import flightController from "./controller/flight.controller.cjs";
 
-config();
+// ****************************
+// Global configuration
+// ****************************
+
+dotEnvConfig();
 
 // ****************************
 // Boot
@@ -15,23 +18,24 @@ config();
  * Create Prisma instance
  * @returns {PrismaClient}
  */
-async function bootPrisma() {
-    const prisma = new PrismaClient();
-
-    return prisma;
-}
+const bootPrisma = () => new PrismaClient();
 
 /**
- *  * Create Fastify instance
+ * Create Fastify instance
  * @returns {Fastify}
  * @type {import('fastify').FastifyInstance} Instance of Fastify
  */
-async function bootFastify() {
-    const fastify = Fastify({
-        logger: true,
-    });
+const bootFastify = () => Fastify({ logger: true });
 
-    fastify.register(cors, {
+/**
+ * Configure and run fastify
+ * @param {Fastify} fastify
+ */
+function startServer(fastify) {
+
+    // Configuration
+
+    __FASTIFY__.register(cors, {
         origin: (origin, cb) => {
             const hostname = new URL(origin).hostname;
             if (hostname === "localhost" || hostname === "127.0.0.1") {
@@ -41,17 +45,11 @@ async function bootFastify() {
             cb(new Error("Not allowed"), false);
         },
     });
+    __FASTIFY__.register(flightController);
+    __FASTIFY__.__PRISMA__ = __PRISMA__;
 
-    fastify.register(flightController);
+    // Run Forest, run !
 
-    return fastify;
-}
-
-/**
- * Configure and run fastify
- * @param {Fastify} fastify
- */
-function startServer(fastify) {
     fastify.listen({ port: process.env.FASTIFY_PORT }, function (err, address) {
         if (err) {
             fastify.log.error(err);
@@ -60,14 +58,12 @@ function startServer(fastify) {
     });
 }
 
-// ****************************
-// Main script
-// ****************************
-
+/**
+ * Main script
+ * @return {void}
+ */
 (async () => {
     const __FASTIFY__ = await bootFastify();
     const __PRISMA__ = await bootPrisma();
-
-    __FASTIFY__.__PRISMA__ = __PRISMA__;
     startServer(__FASTIFY__);
 })();

@@ -3,7 +3,7 @@
  */
 
 const { PrismaClient } = require('@prisma/client');
-const nodemailcontroller =  require('./nodemailController.cjs')
+const nodemailcontroller =  require('../service/nodemailController.cjs')
 
 const prisma = new PrismaClient()
 

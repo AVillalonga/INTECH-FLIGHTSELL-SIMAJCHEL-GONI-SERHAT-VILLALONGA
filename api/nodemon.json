@@ -1,0 +1,6 @@
+{
+    "verbose": true,
+    "delay": 2500,
+    "watch": "./src/*/*.js",
+    "exec": "node ./src/index.js"
+}

@@ -1,9 +1,10 @@
 {
   "name": "api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
-    "start": "node ./index.js"
+    "dev": "npm run db:sync && nodemon --config ./nodemon.json",
+    "db:sync": "prisma db pull && prisma generate"
   },
   "type": "module",
   "dependencies": {
@@ -12,7 +13,8 @@
     "@prisma/client": "^4.3.1",
     "dotenv": "^16.0.2",
     "fastify": "^4.5.3",
-    "nodemailer": "^6.7.8"
+    "nodemailer": "^6.7.8",
+    "nodemon": "^2.0.19"
   },
   "devDependencies": {
     "prisma": "^4.3.1"

@@ -1,6 +1,5 @@
 async function nodemailcontroller(receivers, subject, text, html)
 {
-
     const nodemailer = require("nodemailer");
 
     const transporter = nodemailer.createTransport({
