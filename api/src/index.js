@@ -69,7 +69,7 @@ function startServer(fastify, prisma) {
         return (req, callback) => {
             const corsOptions = {
                 // This is NOT recommended for production as it enables reflection exploits
-                origin: true,
+                origin: '*',
             };
 
             // do not include CORS headers for requests from localhost

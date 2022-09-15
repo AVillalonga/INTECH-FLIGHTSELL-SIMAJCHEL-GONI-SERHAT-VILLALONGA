@@ -1,11 +1,11 @@
 import { writable } from 'svelte/store'
 
 export let savedFlight = writable([]);
-export let flights = writable((await all_flights()))
+export let flights = writable([])
 
 export async function all_flights() {
     const response = await fetch(
-        'http://localhost:3000/flightall',
+        'http://localhost:3000/flights',
         {
             method: 'GET'
         },

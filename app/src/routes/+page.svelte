@@ -36,10 +36,11 @@
 
 <script>
     import { goto } from '$app/navigation';
-    import { flights, savedFlight } from '../store.js';
+    import { onMount } from 'svelte';
+    import { flights, savedFlight, all_flights } from '../store.js';
     // Data
 
-	let selected;   
+	let selected;
 
     // Computed
     const sendmail = async () => {
@@ -51,6 +52,11 @@
     );
         return (await response.json());
     };
+
+    onMount(async () => {
+        console.log('coucou')
+        $flights = [...$flights, ...(await all_flights())];
+    });
 
     const addToCart = () => {
 		$savedFlight = [...$savedFlight, selected];
