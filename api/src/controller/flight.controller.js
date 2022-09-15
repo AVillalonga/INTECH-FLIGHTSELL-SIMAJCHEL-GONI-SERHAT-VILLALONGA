@@ -7,7 +7,8 @@ async function postOrder(fastify, req, res) {
     const { customerInfo, flights } = req.body;
 
     // Todo: remplacer par des schema une fois la validation coté front
-    
+    // Todo: utiliser une giga-transaction
+
     if (customerInfo !== undefined || typeof flights === "array") {
         const { name, mail, password } = customerInfo;
         const rule = (data) => typeof data === "string" && data.length > 3;
@@ -33,19 +34,39 @@ async function postOrder(fastify, req, res) {
                     },
                 });
 
+                const tickets = [];
                 for (const flightId of flights) {
-                    const ticket = await fastify.prisma.ticket.create({
-                        data: {
-                            flight_id: flightId,
-                            order_id: order.id,
-                            created_at: new Date(Date.now())
-                        },
-                    });
+                    try {
+                        tickets.push(
+                            await fastify.prisma.ticket.create({
+                                data: {
+                                    flight_id: flightId,
+                                    order_id: order.id,
+                                    created_at: new Date(Date.now()),
+                                },
+                            })
+                        );
+                    } catch (err) {
+                        await fastify.prisma.order.delete({
+                            where: {
+                                id: order.id,
+                            },
+                        });
+
+                        for (const ticket of tickets)
+                            await fastify.prisma.ticket.delete({
+                                where: {
+                                    id: ticket.id,
+                                },
+                            });
+                    }
                 }
+
+                res.send(tickets);
             } else res.statusCode = 403;
         } else res.statusCode = 422;
     } else res.statusCode = 400;
-    res.send();
+    res.send(null);
 }
 
 /**
