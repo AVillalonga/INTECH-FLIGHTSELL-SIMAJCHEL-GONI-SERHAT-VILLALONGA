@@ -1,0 +1,83 @@
+/**
+ * Reply list of flights
+ * @param {FastifyRequest} req
+ * @param {FastifyReply} res
+ */
+async function postOrder(fastify, req, res) {
+    const { customerInfo, flights } = req.body;
+
+    // Todo: remplacer par des schema une fois la validation coté front
+    
+    if (customerInfo !== undefined || typeof flights === "array") {
+        const { name, mail, password } = customerInfo;
+        const rule = (data) => typeof data === "string" && data.length > 3;
+
+        if ([name, mail, password].filter(rule)) {
+            let customer = await fastify.prisma.customer.findUnique({
+                where: { mail },
+            });
+
+            if (
+                (customer !== null && customer.password === password) ||
+                customer === null
+            ) {
+                if (customer === null) {
+                    customer = await fastify.prisma.customer.create({
+                        data: { name, mail, password },
+                    });
+                }
+
+                const order = await fastify.prisma.order.create({
+                    data: {
+                        customer_id: customer.id,
+                    },
+                });
+
+                for (const flightId of flights) {
+                    const ticket = await fastify.prisma.ticket.create({
+                        data: {
+                            flight_id: flightId,
+                            order_id: order.id,
+                            created_at: new Date(Date.now())
+                        },
+                    });
+                }
+            } else res.statusCode = 403;
+        } else res.statusCode = 422;
+    } else res.statusCode = 400;
+    res.send();
+}
+
+/**
+ * Reply list of flights
+ * @param {FastifyRequest} req
+ * @param {FastifyReply} res
+ */
+async function getFlights(fastify, req, res) {
+    res.send(
+        await fastify.prisma.flight.findMany({
+            include: {
+                location_flight_departure_idTolocation: true,
+                location_flight_destination_idTolocation: true,
+            },
+
+            // Todo: Pagination skip: | take:
+        })
+    );
+}
+
+/**
+ * FlightController
+ * @param {FastifyInstance} fastify
+ */
+export default async function (fastify) {
+    const routes = [
+        ["GET", "/flights", getFlights],
+        ["POST", "/order", postOrder],
+    ];
+
+    const b = (method, url, handler) => new Object({ method, url, handler });
+
+    for (let route of routes)
+        fastify.route(b(route[0], route[1], route[2].bind(null, fastify)));
+}

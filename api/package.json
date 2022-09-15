@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "main": "./src/index.js",
   "scripts": {
-    "dev": "npm run db:sync && nodemon --config ./nodemon.json",
-    "db:sync": "prisma db pull && prisma generate"
+    "dev": "nodemon --config ./nodemon.json",
+    "debug": "node --inspect ./src/index.js",
+    "db:sync": "npx prisma db pull && npx prisma generate"
   },
   "type": "module",
   "dependencies": {

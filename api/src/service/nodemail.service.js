@@ -1,4 +1,4 @@
-async function nodemailcontroller(receivers, subject, text, html)
+async function nodeMailService(receivers, subject, text, html)
 {
     const nodemailer = require("nodemailer");
 
