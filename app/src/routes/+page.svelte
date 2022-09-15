@@ -12,6 +12,7 @@
                 </option>
             {/each}
         </select>
+
         <br>
     
         <ul class="list-group">
@@ -23,9 +24,7 @@
             {/each}
         </ul>
     
-        <button type=submit class="btn btn-secondary">
-            Add to cart
-        </button>
+        <button type=submit class="btn btn-secondary">Add to cart</button>
     </form>
     
     <br>
@@ -43,6 +42,7 @@
 	let selected;
 
     // Computed
+    
     const sendmail = async () => {
         const response = await fetch(
         'http://localhost:3000/sendmail',
@@ -52,11 +52,6 @@
     );
         return (await response.json());
     };
-
-    onMount(async () => {
-        console.log('coucou')
-        $flights = [...$flights, ...(await all_flights())];
-    });
 
     const addToCart = () => {
 		$savedFlight = [...$savedFlight, selected];
@@ -68,6 +63,10 @@
 
     // Method
 
+    onMount(async () => {
+        $flights = [...$flights, ...(await all_flights())];
+    });
+
 	function handleSubmit() {
         console.log($savedFlight)
         goto("/plane")
@@ -76,6 +75,7 @@
 </script>
 
 <style>
+    /* Todo revoir le style */
     .container {
         text-align: center;
     }

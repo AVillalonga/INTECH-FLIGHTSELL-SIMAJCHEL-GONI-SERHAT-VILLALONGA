@@ -3,6 +3,9 @@
     * Détruire votre database
     * Recréer votre basse
     * Passer le dump => `mysql -u <username> -p flight_sell < ./api/sql/2022-09-15-19-23-origin.sql`
+    * Voir dans l'api
+    * Voir dans la home page du front
+    * !!! Ajouter des insertions par défault dans les tables de locations et d'avions !!!
 
 ## 1) Commandes
 
