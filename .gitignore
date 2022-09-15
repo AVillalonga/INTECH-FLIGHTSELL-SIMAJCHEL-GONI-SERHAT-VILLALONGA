@@ -1,3 +1,5 @@
 api/node_modules
 app/node_modules
 .env
+api/dist/latest/**
+!api/dist/latest/.gitkeep
