@@ -103,6 +103,17 @@ CREATE TABLE IF NOT EXISTS `ticket_option` (
 );
 
 /* ************************************************ */
+
+CREATE TABLE IF NOT EXISTS `order_option` (
+    `id`                INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `order_id`         INT(11)         NOT NULL,
+    `flight_option_id`  INT(11)         NOT NULL,
+
+    FOREIGN KEY (`order_id`)           REFERENCES `order`(`id`),
+    FOREIGN KEY (`flight_option_id`)    REFERENCES `flight_option`(`id`)
+);
+
+/* ************************************************ */
 /* Data                                             */
 /* ************************************************ */
 
@@ -125,3 +136,10 @@ INSERT INTO `flight`(`reference`, `departure_id`, `destination_id`, `price`, `di
 ("AAA", 1, 2, "1000", 750),
 ("BBB", 1, 3, "700", 500),
 ("CCC", 2, 3, "300", 250);
+
+/* ************************************************ */
+
+INSERT INTO `flight_option` (`flight_id`, `name`) VALUES
+(1, 'AR'),
+(2, 'AR'),
+(3, 'AR');
