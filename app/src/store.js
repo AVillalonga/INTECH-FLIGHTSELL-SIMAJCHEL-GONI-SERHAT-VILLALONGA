@@ -27,16 +27,20 @@ export async function send_user(username, usermail) {
     return (await response.json());
 }
 
-export async function send_order(flights, user) {
-    
+export async function sendOrder(customerInfo, flights){
+
+    // const body = new FormData();
+    // body.append("customerInfo", {...customerInfo});
+    // body.append("flights", flights.map(f => f.id));
+
     const response = await fetch(
-        'http://localhost:3000/createOrderAndTicket',
+        'http://localhost:3000/order',
         {
             method: 'POST',
             body: JSON.stringify({
-                user : user,
-                flights : flights
-            })
+                customerInfo, 
+                flights : flights.map(f => f.id)
+        })
         },
     );
     return (await response.json());

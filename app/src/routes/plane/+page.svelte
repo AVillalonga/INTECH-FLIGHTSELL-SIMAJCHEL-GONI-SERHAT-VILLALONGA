@@ -1,12 +1,14 @@
 <script>
-    import { savedFlight, send_order, send_user } from '../../store.js';
+    import { savedFlight, sendOrder, send_user } from '../../store.js';
+    import { goto } from '$app/navigation';
 
     let flights = [];
     let tickets = [];
 
-    let name = '';
-    let age;
-    let email = '';
+    let name
+    let age
+    let password
+    let email
 
 	savedFlight.subscribe(value => {
         if(Object.prototype.toString.call(value) === '[object Array]') {
@@ -15,15 +17,21 @@
 	});
 
     async function sendInfos() {
-        const user_info = await send_user(name, email)
-        const ticket_info = await send_order(flights, user_info)
-        addTicket(ticket_info)
+        const customerInfo = {
+            name : name,
+            mail : email,
+            password : "pass",
+        };
+        const order_info = await sendOrder(customerInfo, flights);
+
     }
 
     function addTicket(ticket_result) {
         console.log(ticket_result)
 		tickets = tickets.concat(ticket_result)
+        goto("/order")
     }
+
 
 </script>
 
@@ -32,30 +40,46 @@
     <h6>Plane are : </h6>
     <ul class="list-group">
         {#each flights as flight}
-            <li class="list-group-item">
-                {flight.departureName} - {flight.arrivalName}  {flight.price}€
-            </li>
-        {/each}
+        <a href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">
+                    {flight.location_flight_departure_idTolocation.name} - {flight.location_flight_destination_idTolocation.name}
+                </h6>
+                <small class="text-muted">{flight.price}€</small>
+            </div>
+            {#if flight.flight_option.length > 0}
+            <small>With the following options</small>
+            {/if}
+            <div class="d-flex w-100 justify-content-between">
+                {#each flight.flight_option as { option, price, checked }, i}
+                    {#if checked}
+                        <small class="text-muted">{option}</small>
+                        <small class="text-muted">{price}€</small>
+                    {/if}
+                {/each}
+            </div>
+        </a>
+    {/each}
+
     </ul>
     <p>Fill your informations</p>
 
     <form on:submit|preventDefault={sendInfos}>
-        <input type="text" bind:value={name}>
-        <input type="email" bind:value={email}>
+        <div class="input-group mb-3">
+            <input type="text" bind:value={name} class="form-control" placeholder="name" aria-label="name">
+            <input type="password" bind:value={password} class="form-control" placeholder="password" aria-label="password">
+        </div>
+        <input type="email" bind:value={email} class="form-control" placeholder="email" aria-label="email">
+
+        <label>
+            Enter your birthday:
+            <input type="date" name="bday" />
+        </label>
+        <br>
         <button type=submit class="btn btn-primary">
-            Validate my informations
+            Validate my informations and send mail
         </button>
     </form>
-
-    <ul class="list-group">
-        {#each tickets as ticket}
-           <p>
-            Voici votre id de ticket : {ticket}
-           </p>
-        {/each}
-
-        <h1>IL FAUT G2RER LENVOIE DE MAIL</h1>
-    </ul>
 </div>
 
 <style>

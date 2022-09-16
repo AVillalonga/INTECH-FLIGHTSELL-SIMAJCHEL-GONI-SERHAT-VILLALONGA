@@ -30,7 +30,6 @@
     <br>
     <button class="btn btn-success" disabled={$savedFlight.length === 0} on:click={handleSubmit}>Validate cart</button>
     <button class="btn btn-danger" disabled={$savedFlight.length === 0} on:click={cleanCart}>Empty cart</button>
-    <button class="btn btn-light" on:click={sendmail}>Send mail</button>
 </div>
 
 <script>
@@ -42,16 +41,6 @@
 	let selected;
 
     // Computed
-    
-    const sendmail = async () => {
-        const response = await fetch(
-        'http://localhost:3000/sendmail',
-        {
-            method: 'POST'
-        },
-    );
-        return (await response.json());
-    };
 
     const addToCart = () => {
         $savedFlight = [...$savedFlight, selected];
