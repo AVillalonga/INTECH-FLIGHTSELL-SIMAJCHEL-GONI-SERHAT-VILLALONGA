@@ -47,17 +47,17 @@
                 </h6>
                 <small class="text-muted">{flight.price}€</small>
             </div>
-            {#if flight.flight_option.length > 0}
+            {#if flight.flight_option_meta.length > 0}
             <small>With the following options</small>
             {/if}
-            <div class="d-flex w-100 justify-content-between">
-                {#each flight.flight_option as { option, price, checked }, i}
-                    {#if checked}
-                        <small class="text-muted">{option}</small>
-                        <small class="text-muted">{price}€</small>
+                {#each flight.flight_opts as option}
+                    {#if option.checked}
+                        <div class="d-flex w-100 justify-content-between">
+                            <small class="text-muted">{option.name}</small>
+                            <small class="text-muted">{option.value} { option.isPercent === 0 ? 'euros' : '%' }</small>
+                        </div>
                     {/if}
                 {/each}
-            </div>
         </a>
     {/each}
 

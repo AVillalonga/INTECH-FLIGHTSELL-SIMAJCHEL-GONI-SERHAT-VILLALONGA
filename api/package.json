@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nodemon --config ./nodemon.json",
     "debug": "node --inspect ./src/index.js",
-    "db:sync": "npx prisma db pull && npx prisma generate"
+    "db:sync": "npx prisma db pull --force && npx prisma generate"
   },
   "type": "module",
   "dependencies": {

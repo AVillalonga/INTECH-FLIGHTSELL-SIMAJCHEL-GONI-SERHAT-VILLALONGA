@@ -8,30 +8,27 @@ import mailer from "../service/nodemail.service.js";
  * @param {FastifyReply} res
  */
 async function postOrder(fastify, req, res) {
-    let mail_log
+    let mail_log;
 
     const { customerInfo, flights } = JSON.parse(req.body);
 
-    try{
+    try {
         await fastify.prisma.$transaction(async () => {
             // Todo: remplacer par des schema une fois la validation coté front
             // Todo: utiliser une giga-transaction
 
-            //  if (customerInfo !== undefined && typeof flights.flights === "array") {
+            const { name, mail, password } = customerInfo;
+            const rule = (data) => typeof data === "string" && data.length > 3;
 
-                const { name, mail, password } = customerInfo;
-                const rule = (data) => typeof data === "string" && data.length > 3;
-
-                if ([name, mail, password].filter(rule)) {
-                    let customer = await fastify.prisma.customer.findUnique({
-                        where: { mail },
-                    });
+            if ([name, mail, password].filter(rule)) {
+                let customer = await fastify.prisma.customer.findUnique({
+                    where: { mail },
+                });
 
                 if (
                     (customer !== null && customer.password === password) ||
                     customer === null
-                ) 
-                {
+                ) {
                     if (customer === null) {
                         customer = await fastify.prisma.customer.create({
                             data: { name, mail, password },
@@ -43,50 +40,35 @@ async function postOrder(fastify, req, res) {
                             customer_id: customer.id,
                         },
                     });
-                    
+
                     const tickets = [];
                     for (const flightId of flights) {
-                            tickets.push(
-                                await fastify.prisma.ticket.create({
-                                    data: {
-                                        flight_id: flightId,
-                                        order_id: order.id,
-                                        created_at: new Date(Date.now()),
-                                    },
-                                })
-                            );
+                        tickets.push(
+                            await fastify.prisma.ticket.create({
+                                data: {
+                                    flight_id: flightId,
+                                    order_id: order.id,
+                                    created_at: new Date(Date.now()),
+                                },
+                            })
+                        );
                     }
-                    console.log("########################POTATO");
-                    res.statusCode=200;
+
+                    res.statusCode = 200;
                     res.send();
-                    console.log(await mailer(customerInfo.mail, "Ticket", "Voici l'id de votre commande : 1", ""));
-                    console.log("okokokokokkokkokkoook");
-
-                    // const transporter = nodemailer.createTransport({
-                    //     host: "smtp-mail.outlook.com",
-                    //     port: 587,
-                    //     secure: false, // true for 465, false for other ports
-                    //     auth: {
-                    //       user: "intech-flightsell-simajchel-goni-serhat-villalonga@outlook.com", // generated ethereal user
-                    //       pass: "blabla!!" , // generated ethereal password
-                    //     },
-                    // });
-                    // await transporter.sendMail({
-                    //     from: '"FlightSell" <intech-flightsell-simajchel-goni-serhat-villalonga@outlook.com>', // sender address
-                    //     to: customerInfo, // list of receivers
-                    //     subject: "Ticket", // Subject line
-                    //     text: "Voici l'id de votre commande : " . order.id, // plain text body
-                    //     html: false, // html body
-                    //   });
-                   
-
+                    console.log(
+                        await mailer(
+                            customerInfo.mail,
+                            "Ticket",
+                            "Voici l'id de votre commande : 1",
+                            ""
+                        )
+                    );
+                    
                 } else res.statusCode = 403;
             } else res.statusCode = 422;
-        // } else res.statusCode = 400;
-    });
-    
-    }
-    catch(err) {
+        });
+    } catch (err) {
         fastify.log.info(err);
         res.statusCode = 450;
     }
@@ -103,7 +85,11 @@ async function getFlights(fastify, req, res) {
             include: {
                 location_flight_departure_idTolocation: true,
                 location_flight_destination_idTolocation: true,
-                flight_option: true
+                flight_option_meta: {
+                    include: {
+                        flight_option_meta_type_flight_option_metaToflight_option_meta_type: true,
+                    },
+                },
             },
 
             // Todo: Pagination skip: | take:
