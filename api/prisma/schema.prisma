@@ -40,10 +40,11 @@ model location {
 }
 
 model order {
-  id          Int      @id @default(autoincrement())
-  customer_id Int
-  customer    customer @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_ibfk_1")
-  ticket      ticket[]
+  id           Int            @id @default(autoincrement())
+  customer_id  Int
+  customer     customer       @relation(fields: [customer_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_ibfk_1")
+  order_option order_option[]
+  ticket       ticket[]
 
   @@index([customer_id], map: "customer_id")
 }
@@ -67,6 +68,7 @@ model flight_option {
   name               String               @db.VarChar(256)
   flight             flight               @relation(fields: [flight_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "flight_option_ibfk_1")
   flight_option_meta flight_option_meta[]
+  order_option       order_option[]
   ticket_option      ticket_option[]
 
   @@index([flight_id], map: "flight_id")
@@ -101,4 +103,15 @@ model ticket_option {
 
   @@index([flight_option_id], map: "flight_option_id")
   @@index([ticket_id], map: "ticket_id")
+}
+
+model order_option {
+  id               Int           @id @default(autoincrement())
+  order_id         Int
+  flight_option_id Int
+  order            order         @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_option_ibfk_1")
+  flight_option    flight_option @relation(fields: [flight_option_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_option_ibfk_2")
+
+  @@index([flight_option_id], map: "flight_option_id")
+  @@index([order_id], map: "order_id")
 }
