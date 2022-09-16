@@ -8,14 +8,14 @@
 /* Create Table                                     */
 /* ************************************************ */
 
-CREATE TABLE IF NOT EXISTS `location` (
+CREATE TABLE IF NOT EXISTS `flight_sell`.`location` (
     `id`                INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name`              VARCHAR(1024)   NOT NULL
 );
 
 /* ************************************************ */
 
-CREATE TABLE IF NOT EXISTS `flight` (
+CREATE TABLE IF NOT EXISTS `flight_sell`.`flight` (
     `id`                INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `reference`         VARCHAR(128)    NOT NULL UNIQUE,
     `departure_id`      INT(11)         NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS `flight` (
 
 /* ************************************************ */
 
-CREATE TABLE IF NOT EXISTS `customer` (
+CREATE TABLE IF NOT EXISTS `flight_sell`.`customer` (
     `id`                INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name`              VARCHAR(128)    NOT NULL,
     `mail`              VARCHAR(256)    NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `customer` (
 
 /* ************************************************ */
 
-CREATE TABLE IF NOT EXISTS `order` (
+CREATE TABLE IF NOT EXISTS `flight_sell`.`order` (
     `id`                INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `customer_id`       INT(11)         NOT NULL,
 
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `order` (
 
 /* ************************************************ */
 
-CREATE TABLE IF NOT EXISTS `ticket` (
+CREATE TABLE IF NOT EXISTS `flight_sell`.`ticket` (
     `id`                INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `flight_id`         INT(11)         NOT NULL,
     `order_id`          INT(11)         NOT NULL,
@@ -61,17 +61,14 @@ CREATE TABLE IF NOT EXISTS `ticket` (
 
 /* ************************************************ */
 
-CREATE TABLE IF NOT EXISTS `flight_option` (
+CREATE TABLE IF NOT EXISTS `flight_sell`.`flight_option` (
     `id`                INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `flight_id`         INT(11)         NOT NULl,
-    `name`              VARCHAR(256)    NOT NULL,
-
-    FOREIGN KEY (`flight_id`)       REFERENCES `flight`(`id`)
+    `name`              VARCHAR(256)    NOT NULL
 );
 
 /* ************************************************ */
 
-CREATE TABLE IF NOT EXISTS `flight_option_meta_type` (
+CREATE TABLE IF NOT EXISTS `flight_sell`.`flight_option_meta_type` (
     `id`                INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `type`              VARCHAR(256)    NOT NULL,
     `isPercent`         INT(1)          NOT NULL
@@ -79,13 +76,15 @@ CREATE TABLE IF NOT EXISTS `flight_option_meta_type` (
 
 /* ************************************************ */
 
-CREATE TABLE IF NOT EXISTS `flight_option_meta` (
+CREATE TABLE IF NOT EXISTS `flight_sell`.`flight_option_meta` (
     `id`                INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `flight_option_id`  INT(11)         NOT NULL,             
+    `flight_option_id`  INT(11)         NOT NULL,
+    `flight_id`         INT(11)         NOT NULl,        
     `flight_option_meta_type` INT(11)   NOT NULL,
     `name`              VARCHAR(256)    NOT NULL,
     `value`             VARCHAR(256)    NOT NULL,
 
+    FOREIGN KEY (`flight_id`)           REFERENCES `flight`(`id`),
     FOREIGN KEY (`flight_option_id`)    REFERENCES `flight_option`(`id`),
     FOREIGN KEY (`flight_option_meta_type`) REFERENCES `flight_option_meta_type`(`id`)
 
@@ -93,24 +92,24 @@ CREATE TABLE IF NOT EXISTS `flight_option_meta` (
 
 /* ************************************************ */
 
-CREATE TABLE IF NOT EXISTS `ticket_option` (
+CREATE TABLE IF NOT EXISTS `flight_sell`.`ticket_option` (
     `id`                INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `ticket_id`         INT(11)         NOT NULL,
-    `flight_option_id`  INT(11)         NOT NULL,
+    `flight_option_meta_id`INT(11)         NOT NULL,
 
     FOREIGN KEY (`ticket_id`)           REFERENCES `ticket`(`id`),
-    FOREIGN KEY (`flight_option_id`)    REFERENCES `flight_option`(`id`)
+    FOREIGN KEY (`flight_option_meta_id`)    REFERENCES `flight_option_meta`(`id`)
 );
 
 /* ************************************************ */
 
-CREATE TABLE IF NOT EXISTS `order_option` (
+CREATE TABLE IF NOT EXISTS `flight_sell`.`order_option` (
     `id`                INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `order_id`         INT(11)         NOT NULL,
-    `flight_option_id`  INT(11)         NOT NULL,
+    `order_id`          INT(11)         NOT NULL,
+    `flight_option_meta_id` INT(11)     NOT NULL,
 
     FOREIGN KEY (`order_id`)           REFERENCES `order`(`id`),
-    FOREIGN KEY (`flight_option_id`)    REFERENCES `flight_option`(`id`)
+    FOREIGN KEY (`flight_option_meta_id`)    REFERENCES `flight_option_meta`(`id`)
 );
 
 /* ************************************************ */
@@ -139,7 +138,19 @@ INSERT INTO `flight`(`reference`, `departure_id`, `destination_id`, `price`, `di
 
 /* ************************************************ */
 
-INSERT INTO `flight_option` (`flight_id`, `name`) VALUES
-(1, 'AR'),
-(2, 'AR'),
-(3, 'AR');
+INSERT INTO `flight_option` (`name`) VALUES
+('global'),
+('boisson');
+
+/* ************************************************ */
+
+INSERT INTO `flight_option_meta` (`flight_id`, `flight_option_id`, `flight_option_meta_type`, `name`, `value`) VALUES
+(1, 1, 4, 'AR', '5'),
+(2, 1, 4, 'AR', '5'),
+(3, 1, 4, 'AR', '5'),
+
+(1, 2, 1, 'champagne', '100'),
+
+(1, 1, 4, 'firstClass', '50'),
+(2, 1, 4, 'firstClass', '50'),
+(3, 1, 4, 'firstClass', '50');

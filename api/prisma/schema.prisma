@@ -67,7 +67,6 @@ model flight_option {
   name               String               @db.VarChar(256)
   flight             flight               @relation(fields: [flight_id], references: [id], onUpdate: Restrict, map: "flight_option_ibfk_1")
   flight_option_meta flight_option_meta[]
-  ticket_option      ticket_option[]
 
   @@index([flight_id], map: "flight_id")
 }
@@ -78,8 +77,10 @@ model flight_option_meta {
   flight_option_meta_type                                             Int
   name                                                                String                  @db.VarChar(256)
   value                                                               String                  @db.VarChar(256)
-  flight_option                                                       flight_option           @relation(fields: [flight_option_id], references: [id], onUpdate: Restrict, map: "flight_option_meta_ibfk_1")
-  flight_option_meta_type_flight_option_metaToflight_option_meta_type flight_option_meta_type @relation(fields: [flight_option_meta_type], references: [id], onUpdate: Restrict, map: "flight_option_meta_ibfk_2")
+  flight_option                                                       flight_option           @relation(fields: [flight_option_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "flight_option_meta_ibfk_1")
+  flight_option_meta_type_flight_option_metaToflight_option_meta_type flight_option_meta_type @relation(fields: [flight_option_meta_type], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "flight_option_meta_ibfk_2")
+  order_option                                                        order_option[]
+  ticket_option                                                       ticket_option[]
 
   @@index([flight_option_id], map: "flight_option_id")
   @@index([flight_option_meta_type], map: "flight_option_meta_type")
@@ -93,12 +94,23 @@ model flight_option_meta_type {
 }
 
 model ticket_option {
-  id               Int           @id @default(autoincrement())
-  ticket_id        Int
-  flight_option_id Int
-  ticket           ticket        @relation(fields: [ticket_id], references: [id], onUpdate: Restrict, map: "ticket_option_ibfk_1")
-  flight_option    flight_option @relation(fields: [flight_option_id], references: [id], onUpdate: Restrict, map: "ticket_option_ibfk_2")
+  id                    Int                @id @default(autoincrement())
+  ticket_id             Int
+  flight_option_meta_id Int
+  ticket                ticket             @relation(fields: [ticket_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_option_ibfk_1")
+  flight_option_meta    flight_option_meta @relation(fields: [flight_option_meta_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_option_ibfk_2")
 
-  @@index([flight_option_id], map: "flight_option_id")
   @@index([ticket_id], map: "ticket_id")
+  @@index([flight_option_meta_id], map: "flight_option_meta_id")
+}
+
+model order_option {
+  id                    Int                @id @default(autoincrement())
+  order_id              Int
+  flight_option_meta_id Int
+  order                 order              @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_option_ibfk_1")
+  flight_option_meta    flight_option_meta @relation(fields: [flight_option_meta_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_option_ibfk_2")
+
+  @@index([order_id], map: "order_id")
+  @@index([flight_option_meta_id], map: "flight_option_meta_id")
 }
