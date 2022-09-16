@@ -1,18 +1,23 @@
+import mailer from "../service/nodemail.service.js";
+// import nodemailer from "nodemailer";
+// // const nodemailer = require("nodemailer");
+
 /**
  * Reply list of flights
  * @param {FastifyRequest} req
  * @param {FastifyReply} res
  */
 async function postOrder(fastify, req, res) {
+    let mail_log
 
-    const { customerInfo, flights } = req.body;
+    const { customerInfo, flights } = JSON.parse(req.body);
 
     try{
-        await prisma.$transaction(async (tx) => {
+        await fastify.prisma.$transaction(async () => {
             // Todo: remplacer par des schema une fois la validation coté front
             // Todo: utiliser une giga-transaction
 
-                if (customerInfo !== undefined || typeof flights === "array") {
+            //  if (customerInfo !== undefined && typeof flights.flights === "array") {
 
                 const { name, mail, password } = customerInfo;
                 const rule = (data) => typeof data === "string" && data.length > 3;
@@ -38,7 +43,7 @@ async function postOrder(fastify, req, res) {
                             customer_id: customer.id,
                         },
                     });
-
+                    
                     const tickets = [];
                     for (const flightId of flights) {
                             tickets.push(
@@ -51,16 +56,39 @@ async function postOrder(fastify, req, res) {
                                 })
                             );
                     }
+                    console.log("########################POTATO");
+                    res.statusCode=200;
+                    res.send();
+                    console.log(await mailer(customerInfo.mail, "Ticket", "Voici l'id de votre commande : 1", ""));
+                    console.log("okokokokokkokkokkoook");
 
-                    res.send(tickets);
+                    // const transporter = nodemailer.createTransport({
+                    //     host: "smtp-mail.outlook.com",
+                    //     port: 587,
+                    //     secure: false, // true for 465, false for other ports
+                    //     auth: {
+                    //       user: "intech-flightsell-simajchel-goni-serhat-villalonga@outlook.com", // generated ethereal user
+                    //       pass: "blabla!!" , // generated ethereal password
+                    //     },
+                    // });
+                    // await transporter.sendMail({
+                    //     from: '"FlightSell" <intech-flightsell-simajchel-goni-serhat-villalonga@outlook.com>', // sender address
+                    //     to: customerInfo, // list of receivers
+                    //     subject: "Ticket", // Subject line
+                    //     text: "Voici l'id de votre commande : " . order.id, // plain text body
+                    //     html: false, // html body
+                    //   });
+                   
+
                 } else res.statusCode = 403;
             } else res.statusCode = 422;
-        } else res.statusCode = 400;
-        res.send(null);
+        // } else res.statusCode = 400;
     });
+    
     }
     catch(err) {
-        res.send(err);
+        fastify.log.info(err);
+        res.statusCode = 450;
     }
 }
 

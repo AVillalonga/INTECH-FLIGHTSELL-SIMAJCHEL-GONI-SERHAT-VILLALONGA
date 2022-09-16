@@ -1,6 +1,8 @@
-async function nodeMailService(receivers, subject, text, html)
+// const nodemailer = require("nodemailer");
+import nodemailer from "nodemailer";
+
+export default async function(receivers, subject, text, html)
 {
-    const nodemailer = require("nodemailer");
 
     const transporter = nodemailer.createTransport({
         host: "smtp-mail.outlook.com",
@@ -11,19 +13,14 @@ async function nodeMailService(receivers, subject, text, html)
           pass: "blabla!!" , // generated ethereal password
         },
     });
-    
-    async function send(receivers, subject, text, html)
-    {
-        return await transporter.sendMail({
-            from: '"FlightSell" <intech-flightsell-simajchel-goni-serhat-villalonga@outlook.com>', // sender address
-            to: receivers, // list of receivers
-            subject: subject, // Subject line
-            text: text, // plain text body
-            html: html, // html body
-          });
-    }
 
-    return await send(receivers, subject, text, html)
+    return await transporter.sendMail({
+      from: '"FlightSell" <intech-flightsell-simajchel-goni-serhat-villalonga@outlook.com>', // sender address
+      to: receivers, // list of receivers
+      subject: subject, // Subject line
+      text: text, // plain text body
+      html: html, // html body
+    });
 }
 
-module.exports = nodemailcontroller
+// module.exports = nodeMailService;
