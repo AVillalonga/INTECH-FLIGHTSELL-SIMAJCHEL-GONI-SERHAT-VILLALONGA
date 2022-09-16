@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `location` (
 
 CREATE TABLE IF NOT EXISTS `flight` (
     `id`                INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `reference`         VARCHAR(128)    NOT NULL,
+    `reference`         VARCHAR(128)    NOT NULL UNIQUE,
     `departure_id`      INT(11)         NOT NULL,
     `destination_id`    INT(11)         NOT NULL,
     `price`             VARCHAR(32)     NOT NULL,
@@ -112,3 +112,16 @@ INSERT INTO `flight_option_meta_type` (`type`, `isPercent`) VALUES
 ('add', 1),
 ('sub', 1);
 
+/* ************************************************ */
+
+INSERT INTO `location`(`name`) VALUES
+('CDG'),
+('JFK'),
+('DTW');
+
+/* ************************************************ */
+
+INSERT INTO `flight`(`reference`, `departure_id`, `destination_id`, `price`, `disponibility`) VALUES
+("AAA", 1, 2, "1000", 750),
+("BBB", 1, 3, "700", 500),
+("CCC", 2, 3, "300", 250);

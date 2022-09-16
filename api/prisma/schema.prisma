@@ -18,7 +18,7 @@ model customer {
 
 model flight {
   id                                       Int             @id @default(autoincrement())
-  reference                                String          @db.VarChar(128)
+  reference                                String          @unique(map: "reference") @db.VarChar(128)
   departure_id                             Int
   destination_id                           Int
   price                                    String          @db.VarChar(32)

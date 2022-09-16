@@ -24,3 +24,7 @@
 **Build**
 
     * Ajout de la génération des modèles au moment du lancement du serveur (script `start`)
+
+**API**
+
+    * Renommage des endpoints en /flights et /order
