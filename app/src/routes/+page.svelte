@@ -7,8 +7,8 @@
     <form on:submit|preventDefault={addToCart}>
         <select bind:value={selected} class="form-select">
             {#each $flights as flight}
-                <option value={flight}>
-                    {flight.departureName} - {flight.arrivalName}  {flight.price}€
+                <option value={flight} disabled='{flight.disponibility === 0}'>
+                    {flight.location_flight_departure_idTolocation.name} - {flight.location_flight_destination_idTolocation.name} | {flight.price}€  | {flight.disponibility} places left
                 </option>
             {/each}
         </select>
@@ -16,7 +16,7 @@
         <br>
     
         <ul class="list-group">
-            {#each selected ? selected.option : [] as { option, price, checked }, i}
+            {#each selected ? selected.flight_option : [] as { option, price, checked }, i}
                 <label class="list-group-item">
                     <input class="form-check-input me-1" type=checkbox bind:checked={checked}>
                     {option} for {price} euros
@@ -30,7 +30,7 @@
     <br>
     <button class="btn btn-success" disabled={$savedFlight.length === 0} on:click={handleSubmit}>Validate cart</button>
     <button class="btn btn-danger" disabled={$savedFlight.length === 0} on:click={cleanCart}>Empty cart</button>
-    <button on:click={sendmail}>ENVOYER UN MAIL</button>
+    <button class="btn btn-light" on:click={sendmail}>Send mail</button>
 </div>
 
 <script>
@@ -54,7 +54,7 @@
     };
 
     const addToCart = () => {
-		$savedFlight = [...$savedFlight, selected];
+        $savedFlight = [...$savedFlight, selected];
 	};
 
     const cleanCart = () => {
@@ -64,7 +64,7 @@
     // Method
 
     onMount(async () => {
-        $flights = [...$flights, ...(await all_flights())];
+        $flights = [...(await all_flights())];
     });
 
 	function handleSubmit() {
@@ -75,7 +75,7 @@
 </script>
 
 <style>
-    /* Todo revoir le style */
+    /* Todo revoir le style R: Non*/
     .container {
         text-align: center;
     }

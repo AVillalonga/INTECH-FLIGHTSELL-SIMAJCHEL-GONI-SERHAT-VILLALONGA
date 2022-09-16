@@ -75,6 +75,7 @@ async function getFlights(fastify, req, res) {
             include: {
                 location_flight_departure_idTolocation: true,
                 location_flight_destination_idTolocation: true,
+                flight_option: true
             },
 
             // Todo: Pagination skip: | take:
