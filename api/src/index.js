@@ -1,4 +1,4 @@
-import Fastify from "fastify";
+import Fastify from "fastify"
 import { PrismaClient } from "@prisma/client";
 import cors from "@fastify/cors";
 import { config as dotEnvConfig } from "dotenv";

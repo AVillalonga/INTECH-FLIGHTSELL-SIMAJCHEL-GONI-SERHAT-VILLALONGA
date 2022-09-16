@@ -4,69 +4,64 @@
  * @param {FastifyReply} res
  */
 async function postOrder(fastify, req, res) {
+
     const { customerInfo, flights } = req.body;
 
-    // Todo: remplacer par des schema une fois la validation coté front
-    // Todo: utiliser une giga-transaction
+    try{
+        await prisma.$transaction(async (tx) => {
+            // Todo: remplacer par des schema une fois la validation coté front
+            // Todo: utiliser une giga-transaction
 
-    if (customerInfo !== undefined || typeof flights === "array") {
-        const { name, mail, password } = customerInfo;
-        const rule = (data) => typeof data === "string" && data.length > 3;
+                if (customerInfo !== undefined || typeof flights === "array") {
 
-        if ([name, mail, password].filter(rule)) {
-            let customer = await fastify.prisma.customer.findUnique({
-                where: { mail },
-            });
+                const { name, mail, password } = customerInfo;
+                const rule = (data) => typeof data === "string" && data.length > 3;
 
-            if (
-                (customer !== null && customer.password === password) ||
-                customer === null
-            ) {
-                if (customer === null) {
-                    customer = await fastify.prisma.customer.create({
-                        data: { name, mail, password },
+                if ([name, mail, password].filter(rule)) {
+                    let customer = await fastify.prisma.customer.findUnique({
+                        where: { mail },
                     });
-                }
 
-                const order = await fastify.prisma.order.create({
-                    data: {
-                        customer_id: customer.id,
-                    },
-                });
-
-                const tickets = [];
-                for (const flightId of flights) {
-                    try {
-                        tickets.push(
-                            await fastify.prisma.ticket.create({
-                                data: {
-                                    flight_id: flightId,
-                                    order_id: order.id,
-                                    created_at: new Date(Date.now()),
-                                },
-                            })
-                        );
-                    } catch (err) {
-                        await fastify.prisma.order.delete({
-                            where: {
-                                id: order.id,
-                            },
+                if (
+                    (customer !== null && customer.password === password) ||
+                    customer === null
+                ) 
+                {
+                    if (customer === null) {
+                        customer = await fastify.prisma.customer.create({
+                            data: { name, mail, password },
                         });
-
-                        for (const ticket of tickets)
-                            await fastify.prisma.ticket.delete({
-                                where: {
-                                    id: ticket.id,
-                                },
-                            });
                     }
-                }
 
-                res.send(tickets);
-            } else res.statusCode = 403;
-        } else res.statusCode = 422;
-    } else res.statusCode = 400;
-    res.send(null);
+                    const order = await fastify.prisma.order.create({
+                        data: {
+                            customer_id: customer.id,
+                        },
+                    });
+
+                    const tickets = [];
+                    for (const flightId of flights) {
+                            tickets.push(
+                                await fastify.prisma.ticket.create({
+                                    data: {
+                                        flight_id: flightId,
+                                        order_id: order.id,
+                                        created_at: new Date(Date.now()),
+                                    },
+                                })
+                            );
+                    }
+
+                    res.send(tickets);
+                } else res.statusCode = 403;
+            } else res.statusCode = 422;
+        } else res.statusCode = 400;
+        res.send(null);
+    });
+    }
+    catch(err) {
+        res.send(err);
+    }
 }
 
 /**
