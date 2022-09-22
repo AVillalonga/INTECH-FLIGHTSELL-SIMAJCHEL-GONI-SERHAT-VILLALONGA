@@ -1,0 +1,114 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model direction {
+  id                                       Int      @id @default(autoincrement())
+  departure                                Int
+  destination                              Int
+  location_direction_departureTolocation   location @relation("direction_departureTolocation", fields: [departure], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "direction_ibfk_1")
+  location_direction_destinationTolocation location @relation("direction_destinationTolocation", fields: [destination], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "direction_ibfk_2")
+  flight                                   flight[]
+
+  @@unique([departure, destination], map: "departure")
+  @@index([destination], map: "destination")
+}
+
+model flight {
+  id                          Int             @id @default(autoincrement())
+  reference                   String          @unique(map: "reference") @db.VarChar(128)
+  direction                   Int
+  price                       String          @db.VarChar(32)
+  disponibility               Int
+  origin                      Int
+  direction_directionToflight direction       @relation(fields: [direction], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "flight_ibfk_1")
+  flight_origin               flight_origin   @relation(fields: [origin], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "flight_ibfk_2")
+  flight_option               flight_option[]
+  ticket                      ticket[]
+
+  @@index([direction], map: "direction")
+  @@index([origin], map: "origin")
+}
+
+model flight_option {
+  id                           Int                      @id @default(autoincrement())
+  flight                       Int
+  name                         String                   @db.VarChar(128)
+  value                        String                   @db.VarChar(32)
+  value_type                   Int
+  flight_flightToflight_option flight                   @relation(fields: [flight], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "flight_option_ibfk_1")
+  flight_option_value_type     flight_option_value_type @relation(fields: [value_type], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "flight_option_ibfk_2")
+  ticket_option                ticket_option[]
+
+  @@index([flight], map: "flight")
+  @@index([value_type], map: "value_type")
+}
+
+model flight_option_value_type {
+  id            Int             @id @default(autoincrement())
+  type          String          @db.VarChar(128)
+  isPercent     Int
+  flight_option flight_option[]
+
+  @@unique([type, isPercent], map: "type")
+}
+
+model flight_origin {
+  id     Int      @id @default(autoincrement())
+  name   String   @unique(map: "name") @db.VarChar(128)
+  flight flight[]
+}
+
+model location {
+  id                                        Int         @id @default(autoincrement())
+  name                                      String      @unique(map: "name") @db.VarChar(256)
+  direction_direction_departureTolocation   direction[] @relation("direction_departureTolocation")
+  direction_direction_destinationTolocation direction[] @relation("direction_destinationTolocation")
+}
+
+model order {
+  id               Int      @id @default(autoincrement())
+  user             Int
+  created_at       DateTime @default(now()) @db.Timestamp(0)
+  user_orderTouser user     @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_ibfk_1")
+  ticket           ticket[]
+
+  @@index([user], map: "user")
+}
+
+model ticket {
+  id                    Int             @id @default(autoincrement())
+  flight                Int
+  order                 Int
+  flight_flightToticket flight          @relation(fields: [flight], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_ibfk_1")
+  order_orderToticket   order           @relation(fields: [order], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_ibfk_2")
+  ticket_option         ticket_option[]
+
+  @@index([flight], map: "flight")
+  @@index([order], map: "order")
+}
+
+model ticket_option {
+  id                                         Int           @id @default(autoincrement())
+  ticket                                     Int
+  flight_option                              Int
+  ticket_ticketToticket_option               ticket        @relation(fields: [ticket], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_option_ibfk_1")
+  flight_option_flight_optionToticket_option flight_option @relation(fields: [flight_option], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_option_ibfk_2")
+
+  @@index([flight_option], map: "flight_option")
+  @@index([ticket], map: "ticket")
+}
+
+model user {
+  id       Int     @id @default(autoincrement())
+  name     String  @db.VarChar(128)
+  mail     String  @unique(map: "mail") @db.VarChar(256)
+  password String  @db.VarChar(1024)
+  order    order[]
+}

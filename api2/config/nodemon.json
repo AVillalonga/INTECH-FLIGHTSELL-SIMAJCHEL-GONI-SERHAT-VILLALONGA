@@ -1,0 +1,7 @@
+{
+    "verbose": false,
+    "ignore": ["*.js", "*.test.js"],
+    "ext": "ts, json",
+    "watch": "src",
+    "exec": "npx tsc && node ./dist/index.js"
+}
