@@ -20,6 +20,42 @@ model direction {
   @@index([destination], map: "destination")
 }
 
+model eur_rate {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamp(0)
+  USD        String   @db.VarChar(32)
+  JPY        String   @db.VarChar(32)
+  BGN        String   @db.VarChar(32)
+  CZK        String   @db.VarChar(32)
+  DKK        String   @db.VarChar(32)
+  GBP        String   @db.VarChar(32)
+  HUF        String   @db.VarChar(32)
+  PLN        String   @db.VarChar(32)
+  RON        String   @db.VarChar(32)
+  SEK        String   @db.VarChar(32)
+  CHF        String   @db.VarChar(32)
+  ISK        String   @db.VarChar(32)
+  NOK        String   @db.VarChar(32)
+  HRK        String   @db.VarChar(32)
+  TRY        String   @db.VarChar(32)
+  AUD        String   @db.VarChar(32)
+  BRL        String   @db.VarChar(32)
+  CAD        String   @db.VarChar(32)
+  CNY        String   @db.VarChar(32)
+  HKD        String   @db.VarChar(32)
+  IDR        String   @db.VarChar(32)
+  ILS        String   @db.VarChar(32)
+  INR        String   @db.VarChar(32)
+  KRW        String   @db.VarChar(32)
+  MXN        String   @db.VarChar(32)
+  MYR        String   @db.VarChar(32)
+  NZD        String   @db.VarChar(32)
+  PHP        String   @db.VarChar(32)
+  SGD        String   @db.VarChar(32)
+  THB        String   @db.VarChar(32)
+  ZAR        String   @db.VarChar(32)
+}
+
 model flight {
   id                          Int             @id @default(autoincrement())
   reference                   String          @unique(map: "reference") @db.VarChar(128)
@@ -27,6 +63,7 @@ model flight {
   price                       String          @db.VarChar(32)
   disponibility               Int
   origin                      Int
+  created_at                  DateTime        @default(now()) @db.Timestamp(0)
   direction_directionToflight direction       @relation(fields: [direction], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "flight_ibfk_1")
   flight_origin               flight_origin   @relation(fields: [origin], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "flight_ibfk_2")
   flight_option               flight_option[]
