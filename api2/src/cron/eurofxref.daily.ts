@@ -17,9 +17,8 @@ export async function fetchEurofxref() {
         console.log(value);
         const currency = value["@_currency"];
         const rate = value["@_rate"];
-        
-        prisma.eur_rate.create({
 
-        });
+        console.log(`[NEW EUR RATE] ${currency} - ${rate}`);
+        // prisma.eur_rate.create({ });
     });
 }
