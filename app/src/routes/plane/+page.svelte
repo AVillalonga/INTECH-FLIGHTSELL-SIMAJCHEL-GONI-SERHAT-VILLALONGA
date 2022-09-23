@@ -5,10 +5,9 @@
     let flights = [];
     let tickets = [];
 
-    let name
+    let name = "tot"
     let age
-    let password
-    let email
+    let email = "t@t.fr"
 
 	savedFlight.subscribe(value => {
         if(Object.prototype.toString.call(value) === '[object Array]') {
@@ -20,8 +19,10 @@
         const customerInfo = {
             name : name,
             mail : email,
-            password : "pass",
         };
+        console.log(flights);
+
+        
         const order_info = await sendOrder(customerInfo, flights);
 
     }
@@ -67,7 +68,6 @@
     <form on:submit|preventDefault={sendInfos}>
         <div class="input-group mb-3">
             <input type="text" bind:value={name} class="form-control" placeholder="name" aria-label="name">
-            <input type="password" bind:value={password} class="form-control" placeholder="password" aria-label="password">
         </div>
         <input type="email" bind:value={email} class="form-control" placeholder="email" aria-label="email">
 

@@ -26,7 +26,8 @@ export async function createOrder(userId:number, flights:any[]) {
                 await prisma.ticket.create({
                     data: {
                         flight: flightDB.id,
-                        order: order.id
+                        order: order.id,
+                        price: "32932"
                     },
                 })
             );
