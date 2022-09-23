@@ -152,40 +152,10 @@ CREATE TABLE IF NOT EXISTS flight_sell.ticket_option (
 INSERT INTO flight_sell.flight_option_value_type ( `type`, isPercent )
 VALUES
     ('add', 0),
-    ('sub', 0),
     ('add', 1),
+    ('sub', 0),
     ('sub', 1);
-
-INSERT INTO flight_sell.location (`name`)
-VALUES
-    ('CDG'),
-    ('JFK'),
-    ('DTW');
-
-INSERT INTO flight_sell.direction (departure, destination)
-VALUES
-    (1, 2),
-    (1, 3),
-    (2, 3);
 
 INSERT INTO flight_sell.flight_origin (`name`)
 VALUES
     ("local");
-
-INSERT INTO flight_sell.flight (`reference`, direction, price, disponibility, origin)
-VALUES
-    ("AAA-1", 1, "1000", 750, 1),
-    ("BBB-1", 2, "700", 500, 1),
-    ("CCC-1", 3, "300", 250, 1);
-
-INSERT INTO flight_sell.flight_option (flight, `name`, `value`, value_type)
-VALUES
-    (1, "A/R", "5", 4),
-    (2, "A/R", "5", 4),
-    (3, "A/R", "5", 4),
-    
-    (1, "Champagne", "100", 1),
-    
-    (1, "First Class", "150", 3),
-    (2, "First Class", "150", 3),
-    (3, "First Class", "150", 3);

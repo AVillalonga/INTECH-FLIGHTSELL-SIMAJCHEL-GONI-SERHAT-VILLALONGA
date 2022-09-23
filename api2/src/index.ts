@@ -1,5 +1,6 @@
 import Fastify, { FastifyInstance } from "fastify";
 
+import { DBService } from "./services/db.service.js";
 import cors from "@fastify/cors";
 import { config as dotEnvConfig } from "dotenv";
 import fastifyCron from "fastify-cron";
@@ -10,10 +11,8 @@ dotEnvConfig();
 
 async function boot() {
     const fastify = Fastify({ logger: false });
-
     await fastify.register(cors, { origin: "*" });
     await fastify.register(router);
-    
     await fastify.register(fastifyCron, {
         // https://github.com/kelektiv/node-cron#api
         jobs: [
@@ -25,6 +24,7 @@ async function boot() {
         ],
     });
 
+    await (new DBService()).initializeDatabase();
     const port = Number(process.env["API_PORT"]) || Number("3000");
     fastify.listen({ port }, onLoad.bind(null, fastify));
 }

@@ -14,12 +14,10 @@ export async function fetchEurofxref() {
     const values = body["gesmes:Envelope"].Cube.Cube.Cube;
     const daily = new Array<[string, string]>();
 
-    values.forEach((rate: { "@_currency": string; "@_rate": string }) => {
-        const c: string = rate["@_currency"];
-        const r: string = rate["@_rate"];
-        daily.push([c, r]);
-    });
-    
+    values.forEach((rate: { "@_currency": string; "@_rate": string }) =>
+        daily.push([rate["@_currency"], rate["@_rate"]])
+    );
+
     const now = new Date();
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
