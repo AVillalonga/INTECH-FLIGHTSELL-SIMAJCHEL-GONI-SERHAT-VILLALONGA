@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { getFlightsDTO } from "../../dal/dto/flight.dto.js";
+//import { getFlightsDTO } from "../../dal/dto/flight.dto.js";
 import { createOrder } from "../../dal/dto/order.dto.js";
 import { createUser } from "../../dal/dto/user.dto.js";
 
@@ -16,7 +16,7 @@ export const orderSchema = {
 
 export async function order(req: any, rep: any) {
     const prisma = new PrismaClient();
-    const { name ,mail , flights } = JSON.parse(req.body);
+    const { name ,mail , flights } = req.body;
     //const { name, mail } = userInfo;
 
     await prisma.$transaction(async () => {
@@ -29,11 +29,7 @@ export async function order(req: any, rep: any) {
             rep.statusCode = 403;
             rep.send();
         } else {
-            const orderId = await createOrder(
-                userId,
-                getFlightsDTO(flights)
-
-            );
+            const orderId = await createOrder(userId,flights);
             
             try {
                 //envoie de mail 
