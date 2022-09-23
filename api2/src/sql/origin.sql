@@ -129,6 +129,7 @@ CREATE TABLE IF NOT EXISTS flight_sell.order (
 CREATE TABLE IF NOT EXISTS flight_sell.ticket (
     id              INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
     flight          INT(11)         NOT NULL,
+    `price`         VARCHAR(32)     NOT NULL,
     `order`         INT(11)         NOT NULL,
 
     FOREIGN KEY (flight) REFERENCES flight_sell.flight(id),

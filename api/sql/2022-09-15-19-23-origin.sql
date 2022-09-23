@@ -54,6 +54,7 @@ CREATE TABLE IF NOT EXISTS `flight_sell`.`ticket` (
     `flight_id`         INT(11)         NOT NULL,
     `order_id`          INT(11)         NOT NULL,
     `created_at`        TIMESTAMP       NOT NULL,
+    `price`             VARCHAR(32)     NOT NULL,
 
     FOREIGN KEY (`flight_id`)       REFERENCES `flight`(`id`),
     FOREIGN KEY (`order_id`)        REFERENCES `order`(`id`)
