@@ -4,7 +4,7 @@ export let savedFlight = writable([]);
 export let flights = writable([]);
 
 export async function all_flights() {
-    const response = await fetch("http://localhost:3000/flights", {
+    const response = await fetch("http://localhost:3000/flight/flights", {
         method: "GET",
     });
 
