@@ -19,12 +19,12 @@ export function getFlightsDTOFromBroker(flights:any[]) {
         return {
             reference: flight.id,
             price: flight.price,
-            disponibility: flight.seats,
+            disponibility: flight.total_seats,
             direction: flight.arrival.name,
-            departure: "depart",
-            destination: "destination",
-            options: flight.options,
-            origin: "remote"
+            departure: flight.departure,
+            destination: flight.arrival,
+            options: flight.available_options,
+            origin: flight.tenant
         }
     })
 }

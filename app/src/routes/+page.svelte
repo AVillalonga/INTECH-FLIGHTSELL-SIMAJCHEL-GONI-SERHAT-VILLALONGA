@@ -40,8 +40,14 @@ import { goto } from "$app/navigation";
     <div class="row">
         <div class="col-10 offset-1">
             <h2 class="my-4">Chose planes</h2>
+
+            <div class="row">
+                <div class="col-10 offset-1">
+                    <h5>Cart size {$savedFlight.length}</h5>
+                </div>
+            </div>
             <div class="my-4">
-                Money
+                Currency
                 <select bind:value={devise} class="form-select">
                     <option value="" selected>
                         € 
@@ -58,11 +64,7 @@ import { goto } from "$app/navigation";
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-10 offset-1">
-            <h5>Cart size {$savedFlight.length}</h5>
-        </div>
-    </div>
+
 
     <div class="row">
         <div class="col-10 offset-1">

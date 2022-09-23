@@ -12,6 +12,7 @@
 	savedFlight.subscribe(value => {
         if(Object.prototype.toString.call(value) === '[object Array]') {
             flights = [...value];
+            console.log(flights);
         }
 	});
 
@@ -46,7 +47,7 @@
                 <h6 class="mb-1">
                     {flight.departure} - {flight.destination}
                 </h6>
-                <small class="text-muted">{parseFloat(flight.price) * (flight.hasOwnProperty('devise') ? parseFloat(flight.devise.rate) : 1)} {(flight.devise.hasOwnProperty('name') ? flight.devise.name : "€")}</small>
+                <small class="text-muted">{parseFloat(flight.price) * (flight.hasOwnProperty('devise') ? parseFloat(flight.devise.rate) : 1)} {(flight.hasOwnProperty('devise') ? flight.devise.name : "€")}</small>
             </div>
             {#if flight.options.length > 0}
             <small>With the following options</small>
