@@ -16,7 +16,6 @@ export async function fetchEurofxref() {
     values.forEach((rate: { "@_currency": string; "@_rate": string }) => {
         const c: string = rate["@_currency"];
         const r: string = rate["@_rate"];
-        console.log(`[NEW EUR RATE] ${c} - ${r}`);
         daily.push([c, r]);
     });
 
@@ -37,7 +36,7 @@ export async function fetchEurofxref() {
 
     if (record.length > 0) {
         const fD = (cr: string) => daily.find((c) => c[0] === cr)![1];
-        await prisma.eur_rate.create({
+        const eur_rate = await prisma.eur_rate.create({
             data: {
                 USD: fD("USD"),
                 JPY: fD("JPY"),
@@ -72,6 +71,8 @@ export async function fetchEurofxref() {
                 ZAR: fD("ZAR"),
             },
         });
+
+        console.log(eur_rate);
     }
 }
 
