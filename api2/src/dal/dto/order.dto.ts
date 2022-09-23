@@ -27,7 +27,7 @@ export async function createOrder(userId:number, flights:any[]) {
                     data: {
                         flight: flightDB.id,
                         order: order.id,
-                        price: "32932"
+                        price : "1784"
                     },
                 })
             );
