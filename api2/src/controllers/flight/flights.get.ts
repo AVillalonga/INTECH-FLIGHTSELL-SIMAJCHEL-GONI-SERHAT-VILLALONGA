@@ -17,6 +17,15 @@ export async function flights(req: any, rep: any) {
     const prisma = new PrismaClient();
 
     rep.send({
-        flights: [...getFlightsDTO(await prisma.flight.findMany({})), ...(await getRemotePlanesDTO())]
+        flights: [...getFlightsDTO(await prisma.flight.findMany({
+            include: { flight_option:true,
+            direction_directionToflight:{
+                include: {
+                    location_direction_departureTolocation: true,
+                    location_direction_destinationTolocation: true
+                }
+            }}
+        })),
+         ...(await getRemotePlanesDTO())]
     });
 }

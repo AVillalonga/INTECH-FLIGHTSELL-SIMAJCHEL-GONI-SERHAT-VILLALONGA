@@ -12,8 +12,8 @@ model direction {
   id                                       Int      @id @default(autoincrement())
   departure                                Int
   destination                              Int
-  location_direction_departureTolocation   location @relation("direction_departureTolocation", fields: [departure], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "direction_ibfk_1")
-  location_direction_destinationTolocation location @relation("direction_destinationTolocation", fields: [destination], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "direction_ibfk_2")
+  location_direction_departureTolocation   location @relation("direction_departureTolocation", fields: [departure], references: [id], onUpdate: Restrict, map: "direction_ibfk_1")
+  location_direction_destinationTolocation location @relation("direction_destinationTolocation", fields: [destination], references: [id], onUpdate: Restrict, map: "direction_ibfk_2")
   flight                                   flight[]
 
   @@unique([departure, destination], map: "departure")
@@ -64,8 +64,8 @@ model flight {
   disponibility               Int
   origin                      Int
   created_at                  DateTime        @default(now()) @db.Timestamp(0)
-  direction_directionToflight direction       @relation(fields: [direction], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "flight_ibfk_1")
-  flight_origin               flight_origin   @relation(fields: [origin], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "flight_ibfk_2")
+  direction_directionToflight direction       @relation(fields: [direction], references: [id], onUpdate: Restrict, map: "flight_ibfk_1")
+  flight_origin               flight_origin   @relation(fields: [origin], references: [id], onUpdate: Restrict, map: "flight_ibfk_2")
   flight_option               flight_option[]
   ticket                      ticket[]
 
@@ -79,8 +79,8 @@ model flight_option {
   name                         String                   @db.VarChar(128)
   value                        String                   @db.VarChar(32)
   value_type                   Int
-  flight_flightToflight_option flight                   @relation(fields: [flight], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "flight_option_ibfk_1")
-  flight_option_value_type     flight_option_value_type @relation(fields: [value_type], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "flight_option_ibfk_2")
+  flight_flightToflight_option flight                   @relation(fields: [flight], references: [id], onUpdate: Restrict, map: "flight_option_ibfk_1")
+  flight_option_value_type     flight_option_value_type @relation(fields: [value_type], references: [id], onUpdate: Restrict, map: "flight_option_ibfk_2")
   ticket_option                ticket_option[]
 
   @@index([flight], map: "flight")
@@ -113,7 +113,7 @@ model order {
   id               Int      @id @default(autoincrement())
   user             Int
   created_at       DateTime @default(now()) @db.Timestamp(0)
-  user_orderTouser user     @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_ibfk_1")
+  user_orderTouser user     @relation(fields: [user], references: [id], onUpdate: Restrict, map: "order_ibfk_1")
   ticket           ticket[]
 
   @@index([user], map: "user")
@@ -122,9 +122,10 @@ model order {
 model ticket {
   id                    Int             @id @default(autoincrement())
   flight                Int
+  price                 String          @db.VarChar(32)
   order                 Int
-  flight_flightToticket flight          @relation(fields: [flight], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_ibfk_1")
-  order_orderToticket   order           @relation(fields: [order], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_ibfk_2")
+  flight_flightToticket flight          @relation(fields: [flight], references: [id], onUpdate: Restrict, map: "ticket_ibfk_1")
+  order_orderToticket   order           @relation(fields: [order], references: [id], onUpdate: Restrict, map: "ticket_ibfk_2")
   ticket_option         ticket_option[]
 
   @@index([flight], map: "flight")
@@ -135,8 +136,8 @@ model ticket_option {
   id                                         Int           @id @default(autoincrement())
   ticket                                     Int
   flight_option                              Int
-  ticket_ticketToticket_option               ticket        @relation(fields: [ticket], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_option_ibfk_1")
-  flight_option_flight_optionToticket_option flight_option @relation(fields: [flight_option], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ticket_option_ibfk_2")
+  ticket_ticketToticket_option               ticket        @relation(fields: [ticket], references: [id], onUpdate: Restrict, map: "ticket_option_ibfk_1")
+  flight_option_flight_optionToticket_option flight_option @relation(fields: [flight_option], references: [id], onUpdate: Restrict, map: "ticket_option_ibfk_2")
 
   @@index([flight_option], map: "flight_option")
   @@index([ticket], map: "ticket")

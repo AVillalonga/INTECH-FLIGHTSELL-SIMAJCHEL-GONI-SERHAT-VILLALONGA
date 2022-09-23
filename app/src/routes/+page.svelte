@@ -1,15 +1,22 @@
 <script>
-    import { goto } from "$app/navigation";
+    import { dev } from "$app/environment";
+import { goto } from "$app/navigation";
     import { onMount } from "svelte";
-    import { flights, savedFlight, all_flights } from "../store.js";
+    import { flights, savedFlight, all_flights, all_rates } from "../store.js";
     // Data
 
     let selected;
+    let devise;
+    let rates = [];
 
     // Computed
 
     const addToCart = () => {
+        if(devise != "") {
+            selected.devise = devise
+        }
         $savedFlight = [...$savedFlight, selected];
+        console.log($savedFlight);
     };
 
     const cleanCart = () => {
@@ -19,6 +26,7 @@
     // Method
 
     onMount(async () => {
+        rates = await all_rates();
         $flights = [...(await all_flights())];
     });
 
@@ -31,7 +39,22 @@
 <div class="container">
     <div class="row">
         <div class="col-10 offset-1">
-            <h2 class="my-5">Chose planes</h2>
+            <h2 class="my-4">Chose planes</h2>
+            <div class="my-4">
+                Money
+                <select bind:value={devise} class="form-select">
+                    <option value="" selected>
+                        € 
+                    </option>
+                    {#each rates as rate}
+                        <option value={rate}>
+                            {rate.name}
+                            - 1€ ->  {rate.rate} {rate.name}
+                        </option>
+                    {/each}
+                </select>
+            </div>
+            
         </div>
     </div>
 
@@ -48,18 +71,16 @@
                     {#each $flights as flight}
                         <option
                             value={flight}
-                            disabled={flight.disponibility === 0}
-                        >
-                            {flight.location_flight_departure_idTolocation.name}
-                            - {flight.location_flight_destination_idTolocation
-                                .name} | {flight.price}€ | {flight.disponibility}
-                            places left
+                            disabled={flight.disponibility === 0}>
+                         {flight.departure} > {flight.destination} | {parseFloat(flight.price) * (devise.hasOwnProperty('rate') ? parseFloat(devise.rate) : 1)} {(devise.hasOwnProperty('name') ? devise.name : "€")}
+                         | {flight.disponibility} places left |  {flight.origin}
+
                         </option>
                     {/each}
                 </select>
 
                 <ul class="list-group mt-5">
-                    {#each selected ? selected.flight_opts : [] as option}
+                    {#each selected ? selected.options : [] as option}
                         <label class="list-group-item">
                             <input
                                 class="form-check-input me-1"

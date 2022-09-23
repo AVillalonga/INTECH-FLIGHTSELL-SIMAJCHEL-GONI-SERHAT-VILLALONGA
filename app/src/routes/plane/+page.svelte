@@ -43,14 +43,14 @@
         <a href="#" class="list-group-item list-group-item-action">
             <div class="d-flex w-100 justify-content-between">
                 <h6 class="mb-1">
-                    {flight.location_flight_departure_idTolocation.name} - {flight.location_flight_destination_idTolocation.name}
+                    {flight.departure} - {flight.destination}
                 </h6>
-                <small class="text-muted">{flight.price}€</small>
+                <small class="text-muted">{parseFloat(flight.price) * (flight.hasOwnProperty('devise') ? parseFloat(flight.devise.rate) : 1)} {(flight.devise.hasOwnProperty('name') ? flight.devise.name : "€")}</small>
             </div>
-            {#if flight.flight_option_meta.length > 0}
+            {#if flight.options.length > 0}
             <small>With the following options</small>
             {/if}
-                {#each flight.flight_opts as option}
+                {#each flight.options as option}
                     {#if option.checked}
                         <div class="d-flex w-100 justify-content-between">
                             <small class="text-muted">{option.name}</small>

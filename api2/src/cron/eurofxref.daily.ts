@@ -7,6 +7,7 @@ export async function fetchEurofxref() {
 
     const source =
         "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+    
     const response = await axios.get(source);
     const parser = new XMLParser({ ignoreAttributes: false });
     const body = parser.parse(response.data);
@@ -18,7 +19,7 @@ export async function fetchEurofxref() {
         const r: string = rate["@_rate"];
         daily.push([c, r]);
     });
-
+    
     const now = new Date();
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
@@ -34,7 +35,7 @@ export async function fetchEurofxref() {
         },
     });
 
-    if (record.length > 0) {
+    if (record.length === 0) {
         const fD = (cr: string) => daily.find((c) => c[0] === cr)![1];
         const eur_rate = await prisma.eur_rate.create({
             data: {
@@ -71,7 +72,6 @@ export async function fetchEurofxref() {
                 ZAR: fD("ZAR"),
             },
         });
-
         console.log(eur_rate);
     }
 }
