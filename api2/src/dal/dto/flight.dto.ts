@@ -10,7 +10,6 @@ export function parseFlightToDTO(flight:flight|any): any {
         reference: flight.reference,
         price: flight.price,
         disponibility: flight.disponibility,
-        direction: flight.direction,
         departure: flight.direction_directionToflight.location_direction_departureTolocation.name,
         destination: flight.direction_directionToflight.location_direction_destinationTolocation.name,
         options: flight.flight_option.map(parseOptionToDTO),

@@ -99,6 +99,41 @@ class FlightService {
             },
         });
     }
+
+    async getAvailableFlights() {
+        const flights = await this.prisma.flight.findMany({
+            select: {
+                id: true,
+                disponibility: true,
+                _count: {
+                    select: {
+                        ticket: true
+                    }
+                }
+            }
+        });
+
+        const flightsId = flights
+            .filter(flight => flight._count.ticket < flight.disponibility )
+            .map(flight => flight.id);
+        
+        return await this.prisma.flight.findMany({
+            where: {
+                id: {
+                    in: flightsId
+                }
+            },
+            include: {
+                flight_option: true,
+                direction_directionToflight: {
+                    include: {
+                        location_direction_departureTolocation: true,
+                        location_direction_destinationTolocation: true,
+                    },
+                },
+            },
+        })
+    }
 }
 
 export default new FlightService();

@@ -14,7 +14,6 @@ class FlightRemoteService {
             reference: flight.id,
             price: flight.price,
             disponibility: flight.total_seats,
-            direction: flight.arrival.name,
             departure: flight.departure,
             destination: flight.arrival,
             options: flight.available_options,
