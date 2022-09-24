@@ -1,41 +1,20 @@
-import { PrismaService } from "../../services/prisma.service.js";
-import { createOrder } from "../../dal/dto/order.dto.js";
-import { createUser } from "../../dal/dto/user.dto.js";
+import orderService from "../../services/order.service.js";
+import { parseOrderToDTO } from "../../dal/dto/order.dto.js";
 
 export const orderSchema = {
     response: {
         200: {
             type: "object",
             properties: {
-                reponse: {type: 'string'}
+                reponse: { type: "string" },
             },
         },
-    }
-}
+    },
+};
 
 export async function order(req: any, rep: any) {
-    const { name ,mail , flights } = req.body;
+    const { name, mail, flights } = req.body;
+    const order = await orderService.createOrder(name, mail, flights);
 
-    await PrismaService.$transaction(async () => {
-        const userId = await createUser(
-            name,
-            mail,
-        );
-
-        if (userId === null) {
-            rep.statusCode = 403;
-            rep.send();
-        } else {
-            const orderId = await createOrder(userId,flights);
-            
-            try {
-                //envoie de mail 
-            } catch (err) {
-                console.log(err);
-            }
-
-            rep.statusCode = 200;
-            rep.send(orderId);
-        }
-    });
+    rep.send(parseOrderToDTO(order));
 }
