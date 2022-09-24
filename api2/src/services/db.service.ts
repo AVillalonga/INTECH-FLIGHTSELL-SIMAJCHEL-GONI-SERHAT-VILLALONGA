@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaService } from "./prisma.service.js";
 import flightService from "./flight.service.js";
 
 class DBService {
-    prisma = new PrismaClient();
 
     async initializeDatabase() {
         const flights = [
@@ -37,7 +36,7 @@ class DBService {
             },
         ];
 
-        if((await this.prisma.flight.count({})) === 0) {
+        if((await PrismaService.flight.count({})) === 0) {
             console.log('Initializing flights...')
 
             for(const flight of flights) {

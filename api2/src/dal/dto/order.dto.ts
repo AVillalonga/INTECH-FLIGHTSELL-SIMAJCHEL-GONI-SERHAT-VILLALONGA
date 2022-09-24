@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaService } from "../../services/prisma.service.js";
 
 /**
      * Create  new order
@@ -8,8 +8,7 @@ import { PrismaClient } from "@prisma/client";
      * @return
      */
 export async function createOrder(userId:number, flights:any[]) {
-    const prisma = new PrismaClient();
-    const order = await prisma.order.create({
+    const order = await PrismaService.order.create({
         data: {
             user: userId
         }
@@ -18,12 +17,12 @@ export async function createOrder(userId:number, flights:any[]) {
     const tickets = [];
 
     for (const flight of flights) {
-        let flightDB = await prisma.flight.findUnique({
+        let flightDB = await PrismaService.flight.findUnique({
             where:{ reference: flight.reference }
         })
         if (flightDB !== null){
             tickets.push(
-                await prisma.ticket.create({
+                await PrismaService.ticket.create({
                     data: {
                         flight: flightDB.id,
                         order: order.id,

@@ -1,9 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaService } from "../services/prisma.service.js";
 import { XMLParser } from "fast-xml-parser";
 import { default as axios } from "axios";
 
 export async function fetchEurofxref() {
-    const prisma = new PrismaClient();
     const source: string = process.env['EUR_RATE_URL']!;
     const response = await axios.get(source);
     const parser = new XMLParser({ ignoreAttributes: false });
@@ -19,7 +18,7 @@ export async function fetchEurofxref() {
     yesterday.setDate(yesterday.getDate() - 1);
     fmtDate(yesterday);
 
-    const record = await prisma.eur_rate.findMany({
+    const record = await PrismaService.eur_rate.findMany({
         where: {
             created_at: {
                 gt: yesterday 
@@ -29,7 +28,7 @@ export async function fetchEurofxref() {
 
     if (record.length === 0) {
         const fD = (cr: string) => daily.find((c) => c[0] === cr)![1];
-        const eur_rate = await prisma.eur_rate.create({
+        const eur_rate = await PrismaService.eur_rate.create({
             data: {
                 USD: fD("USD"),
                 JPY: fD("JPY"),

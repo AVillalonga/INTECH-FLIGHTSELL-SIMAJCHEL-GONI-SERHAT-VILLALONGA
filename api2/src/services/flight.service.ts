@@ -1,11 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaService } from "./prisma.service.js";
 
 class FlightService {
-    prisma: PrismaClient;
-
-    constructor() {
-        this.prisma = new PrismaClient();
-    }
 
     async addFlight(
         reference: string,
@@ -20,13 +15,13 @@ class FlightService {
         destination_name = destination_name.toUpperCase();
 
         const findOrCreateLocation = async (name: string) => {
-            let location = await this.prisma.location.findUnique({
+            let location = await PrismaService.location.findUnique({
                 where: { name },
             });
 
             if (location === null) {
                 console.log(location);
-                location = await this.prisma.location.create({
+                location = await PrismaService.location.create({
                     data: { name },
                 });
             }
@@ -37,7 +32,7 @@ class FlightService {
         const departure = await findOrCreateLocation(departure_name);
         const destination = await findOrCreateLocation(destination_name);
 
-        await this.prisma.flight.create({
+        await PrismaService.flight.create({
             data: {
                 reference,
                 disponibility,
@@ -87,7 +82,7 @@ class FlightService {
     }
 
     async getFlights() {
-        return await this.prisma.flight.findMany({
+        return await PrismaService.flight.findMany({
             include: {
                 flight_option: true,
                 direction_directionToflight: {
@@ -101,7 +96,7 @@ class FlightService {
     }
 
     async getAvailableFlights() {
-        const flights = await this.prisma.flight.findMany({
+        const flights = await PrismaService.flight.findMany({
             select: {
                 id: true,
                 disponibility: true,
@@ -117,7 +112,7 @@ class FlightService {
             .filter(flight => flight._count.ticket < flight.disponibility )
             .map(flight => flight.id);
         
-        return await this.prisma.flight.findMany({
+        return await PrismaService.flight.findMany({
             where: {
                 id: {
                     in: flightsId

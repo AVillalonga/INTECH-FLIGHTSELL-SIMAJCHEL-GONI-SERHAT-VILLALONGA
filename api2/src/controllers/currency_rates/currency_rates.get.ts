@@ -1,14 +1,12 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaService } from "../../services/prisma.service.js";
 
 export async function rates(req: any, rep: any) {
-    const prisma = new PrismaClient();
 
-    const latestRate = await prisma.eur_rate.findFirst({
+    const latestRate = await PrismaService.eur_rate.findFirst({
         orderBy: {
             created_at: 'desc'
         }
     });
-
 
     const rates = Object
         .entries(latestRate!)

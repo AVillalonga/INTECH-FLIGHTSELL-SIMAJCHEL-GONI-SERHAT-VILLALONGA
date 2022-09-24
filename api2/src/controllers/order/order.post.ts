@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-//import { getFlightsDTO } from "../../dal/dto/flight.dto.js";
+import { PrismaService } from "../../services/prisma.service.js";
 import { createOrder } from "../../dal/dto/order.dto.js";
 import { createUser } from "../../dal/dto/user.dto.js";
 
@@ -15,11 +14,9 @@ export const orderSchema = {
 }
 
 export async function order(req: any, rep: any) {
-    const prisma = new PrismaClient();
     const { name ,mail , flights } = req.body;
-    //const { name, mail } = userInfo;
 
-    await prisma.$transaction(async () => {
+    await PrismaService.$transaction(async () => {
         const userId = await createUser(
             name,
             mail,
