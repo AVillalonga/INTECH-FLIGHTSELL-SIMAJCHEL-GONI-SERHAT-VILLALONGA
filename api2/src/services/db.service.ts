@@ -1,7 +1,7 @@
-import { FlightService } from "./flight.service.js";
 import { PrismaClient } from "@prisma/client";
+import flightService from "./flight.service.js";
 
-export class DBService {
+class DBService {
     prisma = new PrismaClient();
 
     async initializeDatabase() {
@@ -39,8 +39,12 @@ export class DBService {
 
         if((await this.prisma.flight.count({})) === 0) {
             console.log('Initializing flights...')
-            const flightService = new FlightService();
-            flights.forEach(flight => flightService.addFlight(flight.reference, flight.price, flight.disponibility, flight.departure, flight.destination, "local", flight.options || undefined))    
+
+            for(const flight of flights) {
+                await flightService.addFlight(flight.reference, flight.price, flight.disponibility, flight.departure, flight.destination, "local", flight.options || undefined)
+            }
         }
     }
 }
+
+export default new DBService();

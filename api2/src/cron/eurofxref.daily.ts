@@ -4,10 +4,7 @@ import { default as axios } from "axios";
 
 export async function fetchEurofxref() {
     const prisma = new PrismaClient();
-
-    const source =
-        "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
-    
+    const source: string = process.env['EUR_RATE_URL']!;
     const response = await axios.get(source);
     const parser = new XMLParser({ ignoreAttributes: false });
     const body = parser.parse(response.data);
@@ -18,17 +15,14 @@ export async function fetchEurofxref() {
         daily.push([rate["@_currency"], rate["@_rate"]])
     );
 
-    const now = new Date();
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-
-    [now, yesterday].forEach(fmtDate);
+    fmtDate(yesterday);
 
     const record = await prisma.eur_rate.findMany({
         where: {
             created_at: {
-                lte: yesterday,
-                gte: now,
+                gt: yesterday 
             },
         },
     });
@@ -71,6 +65,8 @@ export async function fetchEurofxref() {
             },
         });
         console.log(eur_rate);
+    } else {
+        console.log(`Last euro rate record at: ${record.shift()!.created_at}`);
     }
 }
 

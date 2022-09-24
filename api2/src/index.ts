@@ -1,7 +1,7 @@
 import Fastify, { FastifyInstance } from "fastify";
 
-import { DBService } from "./services/db.service.js";
 import cors from "@fastify/cors";
+import dbService from "./services/db.service.js";
 import { config as dotEnvConfig } from "dotenv";
 import fastifyCron from "fastify-cron";
 import { fetchEurofxref } from "./cron/eurofxref.daily.js";
@@ -10,7 +10,7 @@ import router from "./router.js";
 dotEnvConfig();
 
 async function boot() {
-    const fastify = Fastify({ logger: false });
+    const fastify = Fastify({ logger: true });
     await fastify.register(cors, { origin: "*" });
     await fastify.register(router);
     await fastify.register(fastifyCron, {
@@ -24,7 +24,7 @@ async function boot() {
         ],
     });
 
-    await (new DBService()).initializeDatabase();
+    await dbService.initializeDatabase();
     const port = Number(process.env["API_PORT"]) || Number("3000");
     fastify.listen({ port }, onLoad.bind(null, fastify));
 }

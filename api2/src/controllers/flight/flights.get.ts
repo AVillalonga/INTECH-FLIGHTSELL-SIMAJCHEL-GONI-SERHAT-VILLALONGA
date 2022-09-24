@@ -1,6 +1,7 @@
-import { PrismaClient } from "@prisma/client";
-import { getFlightsDTO } from "../../dal/dto/flight.dto.js";
-import { getRemotePlanesDTO } from "../../controllers/flight/flights.remote.js"
+import flightRemoteService from "../../services/flight-remote.service.js";
+import flightService from "../../services/flight.service.js";
+import { parseFlightsToDTO } from "../../dal/dto/flight.dto.js";
+// import { getRemotePlanesDTO } from "../../controllers/flight/flights.remote.js";
 
 export const flightsSchema = {
     response: {
@@ -14,18 +15,18 @@ export const flightsSchema = {
 };
 
 export async function flights(req: any, rep: any) {
-    const prisma = new PrismaClient();
-
-    rep.send({
-        flights: [...getFlightsDTO(await prisma.flight.findMany({
-            include: { flight_option:true,
-            direction_directionToflight:{
-                include: {
-                    location_direction_departureTolocation: true,
-                    location_direction_destinationTolocation: true
-                }
-            }}
-        })),
-         ...(await getRemotePlanesDTO())]
-    });
+    const localFlights = await flightService.getFlights();
+    const remoteFlights = await flightRemoteService.fetchRemotePlanes();
+    const flights = [...parseFlightsToDTO(localFlights), ...remoteFlights];
+    rep.send({ flights });
 }
+
+// await prisma.flight.findMany({
+//     include: { flight_option:true,
+//     direction_directionToflight:{
+//         include: {
+//             location_direction_departureTolocation: true,
+//             location_direction_destinationTolocation: true
+//         }
+//     }}
+// })

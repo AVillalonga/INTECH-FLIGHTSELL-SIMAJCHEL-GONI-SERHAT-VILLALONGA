@@ -20,7 +20,7 @@
         "newLine": "lf",
         "allowJs": true, // Must remove it ?
         "checkJs": true,
-        "listEmittedFiles": true,
+        "listEmittedFiles": false,
         "esModuleInterop": true,
 
         // Rules (very strict)

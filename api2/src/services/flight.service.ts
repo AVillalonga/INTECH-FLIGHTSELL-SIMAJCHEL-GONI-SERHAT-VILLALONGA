@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-export class FlightService {
+class FlightService {
     prisma: PrismaClient;
 
     constructor() {
@@ -14,7 +14,7 @@ export class FlightService {
         departure_name: string,
         destination_name: string,
         origin_name = "local",
-        options: any[] = [],
+        options: any[] = []
     ) {
         departure_name = departure_name.toUpperCase();
         destination_name = destination_name.toUpperCase();
@@ -64,18 +64,18 @@ export class FlightService {
                 },
                 flight_option: {
                     create: [
-                        { 
-                            name: 'AR',
+                        {
+                            name: "AR",
                             value_type: 4,
-                            value: '5'
+                            value: "5",
                         },
                         {
-                            name: 'First Class',
+                            name: "First Class",
                             value_type: 2,
-                            value: '150'
+                            value: "150",
                         },
-                        ...options
-                    ]
+                        ...options,
+                    ],
                 },
             },
             include: {
@@ -85,4 +85,20 @@ export class FlightService {
             },
         });
     }
+
+    async getFlights() {
+        return await this.prisma.flight.findMany({
+            include: {
+                flight_option: true,
+                direction_directionToflight: {
+                    include: {
+                        location_direction_departureTolocation: true,
+                        location_direction_destinationTolocation: true,
+                    },
+                },
+            },
+        });
+    }
 }
+
+export default new FlightService();
