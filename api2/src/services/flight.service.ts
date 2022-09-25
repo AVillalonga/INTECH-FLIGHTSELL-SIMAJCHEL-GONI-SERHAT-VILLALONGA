@@ -1,6 +1,20 @@
 import { PrismaService } from "./prisma.service.js";
 
+export type GLOBAL_FLIGHT_OPTIONS = "AR" | "First Class";
+
 class FlightService {
+    defaultFlightOptions = [
+        {
+            name: "AR",
+            value_type: 4,
+            value: "5",
+        },
+        {
+            name: "First Class",
+            value_type: 2,
+            value: "150",
+        },
+    ];
 
     async addFlight(
         reference: string,
@@ -20,7 +34,6 @@ class FlightService {
             });
 
             if (location === null) {
-                console.log(location);
                 location = await PrismaService.location.create({
                     data: { name },
                 });
@@ -58,19 +71,7 @@ class FlightService {
                     },
                 },
                 flight_option: {
-                    create: [
-                        {
-                            name: "AR",
-                            value_type: 4,
-                            value: "5",
-                        },
-                        {
-                            name: "First Class",
-                            value_type: 2,
-                            value: "150",
-                        },
-                        ...options,
-                    ],
+                    create: [...this.defaultFlightOptions, ...options],
                 },
             },
             include: {
@@ -102,21 +103,21 @@ class FlightService {
                 disponibility: true,
                 _count: {
                     select: {
-                        ticket: true
-                    }
-                }
-            }
+                        ticket: true,
+                    },
+                },
+            },
         });
 
         const flightsId = flights
-            .filter(flight => flight._count.ticket < flight.disponibility )
-            .map(flight => flight.id);
-        
+            .filter((flight) => flight._count.ticket < flight.disponibility)
+            .map((flight) => flight.id);
+
         return await PrismaService.flight.findMany({
             where: {
                 id: {
-                    in: flightsId
-                }
+                    in: flightsId,
+                },
             },
             include: {
                 flight_option: true,
@@ -127,7 +128,7 @@ class FlightService {
                     },
                 },
             },
-        })
+        });
     }
 }
 

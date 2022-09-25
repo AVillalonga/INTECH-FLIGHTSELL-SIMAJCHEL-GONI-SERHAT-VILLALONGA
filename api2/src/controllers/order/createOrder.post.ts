@@ -12,9 +12,7 @@ export const orderSchema = {
     },
 };
 
-export async function order(req: any, rep: any) {
-    const { name, mail, flights } = req.body;
-    const order = await orderService.createOrder(name, mail, flights);
-
+export async function createOrder(req: any, rep: any) {
+    const order = await orderService.createOrder(req.body);
     rep.send(parseOrderToDTO(order));
 }

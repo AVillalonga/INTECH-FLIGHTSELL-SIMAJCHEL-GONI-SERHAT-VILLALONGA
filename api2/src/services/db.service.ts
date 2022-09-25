@@ -2,7 +2,6 @@ import { PrismaService } from "./prisma.service.js";
 import flightService from "./flight.service.js";
 
 class DBService {
-
     async initializeDatabase() {
         const flights = [
             {
@@ -11,7 +10,7 @@ class DBService {
                 disponibility: 750,
                 departure: "CDG",
                 destination: "JFK",
-                options: [ { name: 'Champagne', value: '100', value_type: 1 } ]
+                options: [{ name: "Champagne", value: "100", value_type: 1 }],
             },
             {
                 reference: "F-2",
@@ -36,12 +35,22 @@ class DBService {
             },
         ];
 
-        if((await PrismaService.flight.count({})) === 0) {
-            console.log('Initializing flights...')
+        if ((await PrismaService.flight.count({})) === 0) {
+            console.log("Initializing flights...");
 
-            for(const flight of flights) {
-                await flightService.addFlight(flight.reference, flight.price, flight.disponibility, flight.departure, flight.destination, "local", flight.options || undefined)
+            for (const flight of flights) {
+                await flightService.addFlight(
+                    flight.reference,
+                    flight.price,
+                    flight.disponibility,
+                    flight.departure,
+                    flight.destination,
+                    "local",
+                    flight.options || undefined
+                );
             }
+        } else {
+            console.log("Flights ready");
         }
     }
 }

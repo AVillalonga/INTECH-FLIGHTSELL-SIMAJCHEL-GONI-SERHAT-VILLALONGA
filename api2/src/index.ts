@@ -8,6 +8,7 @@ import { fetchEurofxref } from "./cron/eurofxref.daily.js";
 import router from "./router.js";
 
 dotEnvConfig();
+console.log(`\n`.repeat(20));
 
 async function boot() {
     const fastify = Fastify({ logger: true });
@@ -39,7 +40,7 @@ async function onLoad(
         process.exit(1);
     }
 
-    console.log(`\n\nServer listening on '${address}'\n`);
+    console.log(`\n\nServer listening on '${address}'`, `\n`.repeat(4));
     fastify.cron.startAllJobs();
 }
 

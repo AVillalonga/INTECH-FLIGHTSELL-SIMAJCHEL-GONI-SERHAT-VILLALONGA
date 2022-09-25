@@ -1,7 +1,8 @@
 import { FastifyInstance } from "fastify";
-import { order} from "./order.post.js";
-
+import { createOrder } from "./createOrder.post.js";
+import { order } from "./order.get.js";
 
 export function orderController(fastify: FastifyInstance) {
-    fastify.post('/order/createOrder',order)
+    fastify.post("/order/createOrder", createOrder);
+    fastify.get("/order/:orderId", order)
 }
