@@ -106,7 +106,9 @@ class OrderService {
                     flightInstance.flight_option.filter((flight_option) =>
                         options!.includes(flight_option.id)
                     );
-                const price = flightOptionsInstance.reduce(
+                const price = flightOptionsInstance
+                .sort(calcService.sortFlightOption)
+                .reduce(
                     calcService.calcTicketOption,
                     flightPrice
                 );
