@@ -2,10 +2,6 @@ import { flight_option } from "@prisma/client";
 
 class CalcService {
     calcTicketOption(acc: number, flight_option: flight_option) {
-        console.log(
-            `==== ${acc} ${flight_option.value_type} | ${flight_option.value}`
-        );
-
         const value = parseFloat(flight_option.value);
 
         if (flight_option.name === "AR") acc = acc * 2;

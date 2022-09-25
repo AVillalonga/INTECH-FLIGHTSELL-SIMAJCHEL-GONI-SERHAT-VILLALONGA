@@ -45,41 +45,53 @@ class FlightService {
         const departure = await findOrCreateLocation(departure_name);
         const destination = await findOrCreateLocation(destination_name);
 
-        await PrismaService.flight.create({
-            data: {
-                reference,
-                disponibility,
-                price,
-                flight_origin: {
-                    connectOrCreate: {
-                        create: { name: origin_name },
-                        where: { name: origin_name },
-                    },
-                },
-                direction_directionToflight: {
-                    connectOrCreate: {
-                        create: {
-                            departure: departure.id,
-                            destination: destination.id,
+        if (
+            (await PrismaService.flight.findUnique({
+                where: { reference },
+            })) === null
+        ) {
+            await PrismaService.flight.create({
+                data: {
+                    reference,
+                    disponibility,
+                    price,
+                    flight_origin: {
+                        connectOrCreate: {
+                            create: { name: origin_name },
+                            where: { name: origin_name },
                         },
-                        where: {
-                            departure_destination: {
+                    },
+                    direction_directionToflight: {
+                        connectOrCreate: {
+                            create: {
                                 departure: departure.id,
                                 destination: destination.id,
                             },
+                            where: {
+                                departure_destination: {
+                                    departure: departure.id,
+                                    destination: destination.id,
+                                },
+                            },
                         },
                     },
+                    flight_option: {
+                        create: [
+                            ...(origin_name === "local"
+                                ? this.defaultFlightOptions
+                                : []),
+                            ...options,
+                        ],
+                    },
                 },
-                flight_option: {
-                    create: [...this.defaultFlightOptions, ...options],
+                include: {
+                    flight_origin: true,
+                    flight_option: true,
+                    direction_directionToflight: true,
                 },
-            },
-            include: {
-                flight_origin: true,
-                flight_option: true,
-                direction_directionToflight: true,
-            },
-        });
+            });
+            return true;
+        } else return false;
     }
 
     async getFlights() {

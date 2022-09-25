@@ -6,6 +6,7 @@ import { config as dotEnvConfig } from "dotenv";
 import fastifyCron from "fastify-cron";
 import { fetchEurofxref } from "./cron/eurofxref.daily.js";
 import router from "./router.js";
+import { syncOpenApiFlights } from "./cron/openapi.daily.js";
 
 dotEnvConfig();
 console.log(`\n`.repeat(20));
@@ -22,6 +23,11 @@ async function boot() {
                 onTick: fetchEurofxref,
                 runOnInit: true
             },
+            {
+                cronTime: "*/10 * * * *",
+                onTick: syncOpenApiFlights,
+                runOnInit: true
+            }
         ],
     });
 

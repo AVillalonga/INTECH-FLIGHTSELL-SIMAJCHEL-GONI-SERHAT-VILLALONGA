@@ -1,5 +1,6 @@
 import { PrismaService } from "./prisma.service.js";
 import calcService from "./calc.service.js";
+import openapiService from "./openapi.service.js";
 
 class OrderService {
     default_password = "123";
@@ -77,6 +78,41 @@ class OrderService {
                 });
         }
 
+        // Book external api tickets
+
+        const freshOrder = await PrismaService.order.findUnique({
+            select: {
+                ticket: {
+                    select: {
+                        id: true,
+                        flight_flightToticket: {
+                            select: {
+                                flight_origin: {
+                                    select: {
+                                        name: true,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            where: { id: order.id },
+        });
+
+        if (freshOrder) {
+            const openapiTickets = freshOrder.ticket
+                .filter(
+                    (ticket) =>
+                        ticket.flight_flightToticket.flight_origin.name ===
+                        "openapi"
+                )
+                .map((t) => t.id);
+            for (const ticketId of openapiTickets) {
+                await openapiService.bookNow(ticketId);
+            }
+        }
+
         return order;
     }
 
@@ -107,11 +143,8 @@ class OrderService {
                         options!.includes(flight_option.id)
                     );
                 const price = flightOptionsInstance
-                .sort(calcService.sortFlightOption)
-                .reduce(
-                    calcService.calcTicketOption,
-                    flightPrice
-                );
+                    .sort(calcService.sortFlightOption)
+                    .reduce(calcService.calcTicketOption, flightPrice);
 
                 ticketsData.push({
                     flight: flightInstance.id,

@@ -2,9 +2,6 @@ import { PrismaService } from "../../services/prisma.service.js";
 
 export async function order(req: any, rep: any) {
     const { orderId: id } = req.params;
-
-    console.log(`\n`.repeat(2), id, `\n`.repeat(2));
-
     return await PrismaService.order.findUnique({
         select: {
             created_at: true,

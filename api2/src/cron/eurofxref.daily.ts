@@ -1,10 +1,9 @@
 import { PrismaService } from "../services/prisma.service.js";
 import { XMLParser } from "fast-xml-parser";
-import { default as axios } from "axios";
+import axios from "axios";
 
 export async function fetchEurofxref() {
-    const source: string = process.env['EUR_RATE_URL']!;
-    const response = await axios.get(source);
+    const response = await axios.get(process.env['EUR_RATE_URL']!);
     const parser = new XMLParser({ ignoreAttributes: false });
     const body = parser.parse(response.data);
     const values = body["gesmes:Envelope"].Cube.Cube.Cube;

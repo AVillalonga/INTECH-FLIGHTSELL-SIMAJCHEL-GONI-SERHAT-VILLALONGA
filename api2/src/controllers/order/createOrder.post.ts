@@ -13,6 +13,9 @@ export const orderSchema = {
 };
 
 export async function createOrder(req: any, rep: any) {
+    if (typeof req.body === "string") {
+        req.body = JSON.parse(req.body);
+    }
     const order = await orderService.createOrder(req.body);
     rep.send(parseOrderToDTO(order));
 }
