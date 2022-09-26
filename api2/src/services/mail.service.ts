@@ -5,7 +5,7 @@ class MailService {
         try {
             const transporter = nodemailer.createTransport({
                 host: "in-v3.mailjet.com",
-                port: 587,
+                port: 465,
                 secure: true, // true for 465, false for other ports
                 auth: {
                     user: "ad2d0596f3fbcf7bee02cba5d76533c9", // generated ethereal user
@@ -14,7 +14,7 @@ class MailService {
             });
 
             await transporter.sendMail({
-                from: '"FlightSell" <intech-flightsell-simajchel-goni-serhat-villalonga@outlook.com>', // sender address
+                from: 'intech-flightsell-simajchel-goni-serhat-villalonga@outlook.com', // sender address
                 to: receivers,
                 subject: subject,
                 text: text,

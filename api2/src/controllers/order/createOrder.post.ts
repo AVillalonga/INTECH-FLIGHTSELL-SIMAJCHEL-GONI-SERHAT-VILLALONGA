@@ -19,35 +19,17 @@ export async function createOrder(req: any, rep: any) {
     }
     const order = await orderService.createOrder(req.body);
 
-    // await PrismaService.order.findUnique({
-    //     select: {
-    //         ticket: {
-    //             select: {
-    //                 id: true,
-    //                 flight_flightToticket: {
-    //                     select: {
-    //                         direction_directionToflight: {
-    //                             select: {
-    //                                 location_direction_departureTolocation: {
-    //                                     select: {name: true}
-    //                                 }
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     },
-    //     where: { id: order.id }
-    // });
+    try {
+        await mailService.sendMail(
+            order.user_orderTouser.mail,
+            `Votre commande à été confirmé (#${order.id})`,
+            `Merci d\'avoir commander chez nous ${
+                order.ticket.length
+            } tickets.\n ${order.ticket.map((t) => t.price).join("€ ")}`
+        );
+    } catch (err) {
+        console.log(err);
+    }
 
     rep.send(parseOrderIdToDTO(order));
-    //Send mail after req.send to not block the UI
-    await mailService.sendMail(
-        order.user_orderTouser.mail,
-        `Votre commande à été confirmé (#${order.id})`,
-        `Merci d\'avoir commander chez nous ${
-            order.ticket.length
-        } tickets.\n ${order.ticket.map((t) => t.price).join("€ ")}`
-    );
 }
