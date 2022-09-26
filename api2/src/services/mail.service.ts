@@ -4,12 +4,12 @@ class MailService {
     async sendMail(receivers: string, subject: string, text: string) {
         try {
             const transporter = nodemailer.createTransport({
-                host: "smtp-mail.outlook.com",
+                host: "in-v3.mailjet.com",
                 port: 587,
-                secure: false, // true for 465, false for other ports
+                secure: true, // true for 465, false for other ports
                 auth: {
-                    user: "intech-flightsell-simajchel-goni-serhat-villalonga@outlook.com", // generated ethereal user
-                    pass: "blabla!!", // generated ethereal password
+                    user: "ad2d0596f3fbcf7bee02cba5d76533c9", // generated ethereal user
+                    pass: "b9864f4843ea479ffd1b8948e5827abc", // generated ethereal password
                 },
             });
 
