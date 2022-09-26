@@ -54,7 +54,7 @@ export async function cronPushLocalPlanesToBroder() {
                 return {
                     name: opt.name,
                     code: opt.name,
-                    price: parseFloat(opt.value),
+                    price: opt.value,
                 };
             }),
             stop_overs: [], // TODO

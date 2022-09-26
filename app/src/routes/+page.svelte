@@ -1,107 +1,141 @@
 <script>
-    import { dev } from "$app/environment";
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
     import { flights, savedFlight, all_flights, all_rates } from "../store.js";
-    // Data
 
-    let selected;
-    let devise;
+    /**
+     * Fields
+     */
     let rates = [];
+    let devise;
+    let selected;
 
-    // Computed
-
+    /**
+     * Add to cart
+     */
     const addToCart = () => {
-        if(devise != "") {
-            selected.devise = devise
-        }
+        if (devise != "") selected.devise = devise;
+        selected.options = selected.options.filter(option => option.active === true);
         $savedFlight = [...$savedFlight, selected];
         console.log($savedFlight);
     };
 
+    /**
+     * Clean cart
+     */
     const cleanCart = () => {
         $savedFlight = [];
     };
 
-    // Method
-
+    /**
+     * OnMount
+     */
     onMount(async () => {
         rates = await all_rates();
         $flights = [...(await all_flights())];
     });
 
+    /**
+     * Handle submit
+     */
     function handleSubmit() {
-        console.log($savedFlight);
         goto("/plane");
     }
+
 </script>
 
+<!-- Main container -->
 <div class="container">
+    <!-- Header -->
     <div class="row">
-        <div class="col-10 offset-1">
-            <h2 class="my-4">Chose planes</h2>
-
-            <div class="row">
-                <div class="col-10 offset-1">
-                    <h5>Cart size {$savedFlight.length}</h5>
-                </div>
-            </div>
-            <div class="my-4">
-                Currency
-                <select bind:value={devise} class="form-select">
-                    <option value="" selected>
-                        € 
-                    </option>
-                    {#each rates as rate}
-                        <option value={rate}>
-                            {rate.name}
-                            - 1€ ->  {rate.value} {rate.name}
-                        </option>
-                    {/each}
-                </select>
-            </div>
-            
+        <div class="col">
+            <h2>FLIGHT SELL</h2>
         </div>
     </div>
 
-
-
+    <!-- Cart -->
     <div class="row">
-        <div class="col-10 offset-1">
-            <form on:submit|preventDefault={addToCart}>
+        <div class="col">
+            <h2>Cart</h2>
+            <div class="row">
+                {#each $savedFlight as flight}
+                    <div class="col-10 offset-1">
+                        <b>{ flight.reference }</b> { flight.departure } > { flight.destination }
+                    </div>
+                {/each}
+            </div>
+        </div>
+    </div>
+
+    <!-- Currency Rate -->
+    <div class="row">
+        <div class="col">
+            <h2>Selectionner un converteur de euro ?</h2>
+            <select bind:value={devise} class="form-select">
+                <option value="EUR" selected>EUR</option>
+                {#each rates as rate}
+                    <option value={rate}>
+                        {rate.name}
+                    </option>
+                {/each}
+            </select>
+        </div>
+    </div>
+
+    <!-- Plane selector -->
+    <div class="row">
+        <div class="col">
+            <form on:submit|preventDefault={addToCart} class="planeSelector">
                 <select bind:value={selected} class="form-select">
                     {#each $flights as flight}
                         <option
                             value={flight}
-                            disabled={flight.disponibility === 0}>
-                         {flight.departure} > {flight.destination} | {parseFloat(flight.price) * (devise.hasOwnProperty('value') ? parseFloat(devise.value) : 1)} {(devise.hasOwnProperty('name') ? devise.name : "€")}
-                         | {flight.disponibility} places left |  {flight.origin}
-
+                            disabled={flight.disponibility === 0}
+                        >
+                            {flight.departure} > {flight.destination} | {parseFloat(
+                                flight.price
+                            ) *
+                                (devise.hasOwnProperty("value")
+                                    ? parseFloat(devise.value)
+                                    : 1)}
+                            {devise.hasOwnProperty("name") ? devise.name : "€"}
+                            | {flight.disponibility} places left | {flight.origin}
                         </option>
                     {/each}
                 </select>
 
-                <ul class="list-group mt-5">
-                    {#each selected ? selected.options : [] as option}
+                <ul class="list-group">
+                    {#each (selected ? selected.options : []) as option, optionIncrement}
                         <label class="list-group-item">
                             <input
                                 class="form-check-input me-1"
                                 type="checkbox"
-                                bind:checked={option.checked}
+                                bind:checked={selected.options[optionIncrement].active}
                             />
-                            {option.name} for {option.value} { option.isPercent === 0 ? 'euros' : '%' }
+                            <span class="optionName">{option.name === "AR" ? "Allé/Retour" : option.name }</span> - {option.value}
+                            {option.value_type === 1 ? "€" : ""}
+                            {option.value_type === 2 ? "%" : ""}
+                            {option.value_type === 3 ? "€ (reduction)" : ""}
+                            {option.value_type === 4 ? "% (reduction)" : ""}
+
                         </label>
                     {/each}
                 </ul>
 
-                <button type="submit" class="btn btn-secondary my-5">Add to cart</button
-                >
+                <button type="submit" class="btn btn-primary">Add to cart</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="row">
+        <div class="col">
             <button
                 class="btn btn-success"
                 disabled={$savedFlight.length === 0}
                 on:click={handleSubmit}>Validate cart</button
             >
+
             <button
                 class="btn btn-danger"
                 disabled={$savedFlight.length === 0}
@@ -112,8 +146,42 @@
 </div>
 
 <style>
-    /* Todo revoir le style R: Non*/
     .container {
+        margin: 32px auto;
+        border: 1px solid #00000030 !important;
+    }
+    .container > .row {
+        padding: 16px 0;
+    }
+
+    .container > .row:nth-child(1) {
+        background-image: linear-gradient(-120deg, #00000050, #00000010);
+        color: #ffffff;
         text-align: center;
+        letter-spacing: 10px;
+        font-weight: bold;
+        font-size: 48px !important;
+    }
+
+    .container > .row:nth-child(2n + 1) {
+        background-color: #00000020;
+    }
+
+    .list-group-item {
+        border-radius: 0;
+    }
+
+    .planeSelector select {
+        border-radius: 0;
+        margin-bottom: 16px;
+    }
+
+    .optionName {
+        background-color: #00000020;
+        padding: 0 6px;
+    }
+
+    .btn-primary {
+        margin-top: 16px;
     }
 </style>

@@ -2,7 +2,6 @@ import axios from "axios";
 
 class FlightRemoteService {
     sourceUrl: string = process.env["REMOTE_URL"]!;
-    sourceKey: string = process.env["REMOTE_KEY"]!;
 
     async fetchRemotePlanes(): Promise<any[]> {
         try {
