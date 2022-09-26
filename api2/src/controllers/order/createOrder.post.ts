@@ -1,5 +1,5 @@
 import orderService from "../../services/order.service.js";
-import { parseOrderToDTO } from "../../dal/dto/order.dto.js";
+import { parseOrderIdToDTO } from "../../dal/dto/order.dto.js";
 
 export const orderSchema = {
     response: {
@@ -17,5 +17,5 @@ export async function createOrder(req: any, rep: any) {
         req.body = JSON.parse(req.body);
     }
     const order = await orderService.createOrder(req.body);
-    rep.send(parseOrderToDTO(order));
+    rep.send(parseOrderIdToDTO(order));
 }

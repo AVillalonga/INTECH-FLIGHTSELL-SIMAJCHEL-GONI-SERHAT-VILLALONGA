@@ -1,6 +1,6 @@
 <script>
     import { dev } from "$app/environment";
-import { goto } from "$app/navigation";
+    import { goto } from "$app/navigation";
     import { onMount } from "svelte";
     import { flights, savedFlight, all_flights, all_rates } from "../store.js";
     // Data
@@ -55,7 +55,7 @@ import { goto } from "$app/navigation";
                     {#each rates as rate}
                         <option value={rate}>
                             {rate.name}
-                            - 1€ ->  {rate.rate} {rate.name}
+                            - 1€ ->  {rate.value} {rate.name}
                         </option>
                     {/each}
                 </select>
@@ -74,7 +74,7 @@ import { goto } from "$app/navigation";
                         <option
                             value={flight}
                             disabled={flight.disponibility === 0}>
-                         {flight.departure} > {flight.destination} | {parseFloat(flight.price) * (devise.hasOwnProperty('rate') ? parseFloat(devise.rate) : 1)} {(devise.hasOwnProperty('name') ? devise.name : "€")}
+                         {flight.departure} > {flight.destination} | {parseFloat(flight.price) * (devise.hasOwnProperty('value') ? parseFloat(devise.value) : 1)} {(devise.hasOwnProperty('name') ? devise.name : "€")}
                          | {flight.disponibility} places left |  {flight.origin}
 
                         </option>

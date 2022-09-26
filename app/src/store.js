@@ -2,6 +2,7 @@ import { writable } from "svelte/store";
 
 export let savedFlight = writable([]);
 export let flights = writable([]);
+export let orderId = writable();
 
 export async function all_flights() {
     const response = await fetch("http://localhost:3000/flight/flights", {
@@ -18,7 +19,9 @@ export async function all_rates() {
     const response = await fetch("http://localhost:3000/rates", {
         method: "GET",
     });
-    return (await response.json()).rates;
+    let rates = (await response.json()).rates
+    console.log(rates);
+    return rates;
 }
 
 export async function send_user(username, usermail) {
@@ -55,3 +58,32 @@ export async function sendOrder(customerInfo, flights) {
     });
     return await response.json();
 }
+
+export async function getBasketPrice(flights) {
+    let prepareFlights = flights.map((f) => {
+        return {
+            reference: f.reference,
+            options: f.options.filter(opt => opt.checked === true).map(opt => opt.id)
+        }
+    });
+
+    const response = await fetch("http://localhost:3000/order/calc", {
+        method: "POST",
+        body: JSON.stringify({
+            flights: prepareFlights,
+        }),
+    });
+    let price = (await response.json()).total
+    console.log(price);
+    return price;
+}
+
+export async function getOrderRecap(orderId) {
+    const response = await fetch("http://localhost:3000/order/" + orderId, {
+        method: "GET",
+    });
+    let price = (await response.json())
+    console.log(price);
+    return price;
+}
+

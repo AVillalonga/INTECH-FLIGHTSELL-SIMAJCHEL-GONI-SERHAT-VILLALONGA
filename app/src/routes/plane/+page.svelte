@@ -1,5 +1,5 @@
 <script>
-    import { savedFlight, sendOrder, send_user } from '../../store.js';
+    import { savedFlight, sendOrder, orderId, getBasketPrice } from '../../store.js';
     import { goto } from '$app/navigation';
 
     let flights = [];
@@ -8,11 +8,13 @@
     let name = "tot"
     let age
     let email = "t@t.fr"
+    let totalPrice = "processing..."
 
-	savedFlight.subscribe(value => {
+	savedFlight.subscribe(async value =>  {
         if(Object.prototype.toString.call(value) === '[object Array]') {
             flights = [...value];
             console.log(flights);
+            totalPrice = await getBasketPrice(flights);
         }
 	});
 
@@ -22,19 +24,14 @@
             mail : email,
         };
         console.log(flights);
-
         
         const order_info = await sendOrder(customerInfo, flights);
+        $orderId = order_info.id
 
-    }
-
-    function addTicket(ticket_result) {
-        console.log(ticket_result)
-		tickets = tickets.concat(ticket_result)
+        console.log($orderId);
+        console.log("-------");
         goto("/order")
     }
-
-
 </script>
 
 <div class="container">
@@ -47,10 +44,10 @@
                 <h6 class="mb-1">
                     {flight.departure} - {flight.destination}
                 </h6>
-                <small class="text-muted">{parseFloat(flight.price) * (flight.hasOwnProperty('devise') ? parseFloat(flight.devise.rate) : 1)} {(flight.hasOwnProperty('devise') ? flight.devise.name : "€")}</small>
+                <small class="text-muted">{parseFloat(flight.price) * (flight.hasOwnProperty('devise') ? parseFloat(flight.devise.value) : 1)} {(flight.hasOwnProperty('devise') ? flight.devise.name : "€")}</small>
             </div>
-            {#if flight.options.length > 0}
-            <small>With the following options</small>
+            {#if flight.options.filter(opt => opt.checked).length > 0}
+                <small>With the following options</small>
             {/if}
                 {#each flight.options as option}
                     {#if option.checked}
@@ -62,8 +59,13 @@
                 {/each}
         </a>
     {/each}
-
+    {#if flights.length != 0 && totalPrice}
+        <h5 class="list-group-item">Total is 
+            {(parseFloat(totalPrice) * (flights[0].hasOwnProperty('devise') ? parseFloat(flights[0].devise.value) : 1)).toFixed(2)} {(flights[0].hasOwnProperty('devise') ? flights[0].devise.name : "€")}
+        </h5>
+    {/if}
     </ul>
+
     <p>Fill your informations</p>
 
     <form on:submit|preventDefault={sendInfos}>
@@ -72,13 +74,16 @@
         </div>
         <input type="email" bind:value={email} class="form-control" placeholder="email" aria-label="email">
 
+        <!--
         <label>
             Enter your birthday:
             <input type="date" name="bday" />
         </label>
+        -->
+
         <br>
         <button type=submit class="btn btn-primary">
-            Validate my informations and send mail
+            Validate, Pay and Get my tickets
         </button>
     </form>
 </div>
