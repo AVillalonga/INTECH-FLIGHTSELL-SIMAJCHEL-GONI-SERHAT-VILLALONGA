@@ -120,8 +120,10 @@ CREATE TABLE IF NOT EXISTS flight_sell.order (
     id              INT(11)         NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user            INT(11)         NOT NULL,
     created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    eur_rate        INT(11)         NOT NULL,
 
-    FOREIGN KEY (user) REFERENCES flight_sell.user(id)
+    FOREIGN KEY (user) REFERENCES flight_sell.user(id),
+    FOREIGN KEY (eur_rate) REFERENCES flight_sell.eur_rate(id)
 );
 
 -- TICKET --

@@ -1,5 +1,6 @@
 import { PrismaService } from "./prisma.service.js";
 import calcService from "./calc.service.js";
+import { getLastRate } from "../cron/eurofxref.daily.js";
 import mailService from "./mail.service.js";
 import openapiService from "./openapi.service.js";
 
@@ -13,6 +14,7 @@ class OrderService {
     }) {
         const { name, mail, flights: orderFlightsPostDto } = orderPostDto;
         const ticketsData = await this.createTicketsData(orderFlightsPostDto);
+        const rate = await getLastRate();
 
         const order = await PrismaService.order.create({
             data: {
@@ -33,10 +35,16 @@ class OrderService {
                         data: ticketsData,
                     },
                 },
+                eur_rate_eur_rateToorder: {
+                    connect: {
+                        id: rate.id
+                    }
+                }
             },
             include: {
                 user_orderTouser: true,
                 ticket: true,
+                eur_rate_eur_rateToorder: true,
             },
         });
 
@@ -119,7 +127,7 @@ class OrderService {
         await mailService.sendMail(order.user_orderTouser.mail, 
             `Votre commande à été confirmé (#${order.id})`, 
             `Merci d\'avoir commander chez nous ${order.ticket.length} tickets.\n ${order.ticket.map((t) => t.price).join("€ ")}`);
-
+            
         return order;
     }
 
