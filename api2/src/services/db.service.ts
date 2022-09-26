@@ -36,7 +36,7 @@ class DBService {
         ];
 
         if ((await PrismaService.flight.count({})) === 0) {
-            console.log("Initializing flights...");
+            console.log("[db service] Initializing flights...");
 
             for (const flight of flights) {
                 await flightService.addFlight(
@@ -50,7 +50,7 @@ class DBService {
                 );
             }
         } else {
-            console.log("Flights ready");
+            console.log("[db service] Flights ready");
         }
     }
 }
