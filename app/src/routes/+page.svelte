@@ -72,7 +72,7 @@
         <div class="col">
             <h2>Selectionner un converteur de euro ?</h2>
             <select bind:value={devise} class="form-select">
-                <option value="EUR" selected>EUR</option>
+                <option value="" selected>EUR</option>
                 {#each rates as rate}
                     <option value={rate}>
                         {rate.name}
