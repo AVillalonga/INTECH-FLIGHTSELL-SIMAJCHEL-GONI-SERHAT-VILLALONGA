@@ -69,7 +69,7 @@ export async function cronPushLocalPlanesToBroder() {
     };
 
     try {
-        await axios.post(sourceUrl + "/flights", payload);
+        await axios.post(sourceUrl, payload);
     } catch (err) {
         console.error(err);
     }
