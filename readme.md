@@ -12,5 +12,6 @@
     8/ Lancer `npm run dev`  
   
 **Côté application**  
+  
     1/ Lancer la commande `npm install`  
     2/ Lancer la commande `npm run dev`  
