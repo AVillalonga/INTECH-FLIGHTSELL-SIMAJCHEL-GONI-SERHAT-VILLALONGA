@@ -14,9 +14,11 @@
      * Add to cart
      */
     const addToCart = () => {
-        if (devise != "") selected.devise = devise;
-        selected.options = selected.options.filter(option => option.active === true);
-        $savedFlight = [...$savedFlight, selected];
+        const newInstance = Object.assign({}, selected);
+
+        if (devise != "") newInstance.devise = devise;
+        newInstance.options = selected.options.filter(option => option.active === true);
+        $savedFlight = [...$savedFlight, newInstance];
         console.log($savedFlight);
     };
 
