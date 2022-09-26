@@ -11,7 +11,7 @@
     7/ Lancer la commande `npx prisma pull` et `npx prisma generate` (Regénérer les modèles prisma)  
     8/ Lancer `npm run dev`  
   
-**Côté application**  
+**Côté application :**  
   
     1/ Lancer la commande `npm install`  
     2/ Lancer la commande `npm run dev`  
