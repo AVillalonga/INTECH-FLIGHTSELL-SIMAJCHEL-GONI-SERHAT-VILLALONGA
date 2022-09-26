@@ -13,6 +13,6 @@ export function parseFlightToDTO(flight:flight|any): any {
         departure: flight.direction_directionToflight.location_direction_departureTolocation.name,
         destination: flight.direction_directionToflight.location_direction_destinationTolocation.name,
         options: flight.flight_option.map(parseOptionToDTO),
-        origin: "local"
+        origin: flight.flight_origin.name
     }
 }

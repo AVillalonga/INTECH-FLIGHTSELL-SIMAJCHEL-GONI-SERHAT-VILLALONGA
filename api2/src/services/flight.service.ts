@@ -139,6 +139,11 @@ class FlightService {
                         location_direction_destinationTolocation: true,
                     },
                 },
+                flight_origin: {
+                    select: {
+                        name: true
+                    }
+                }
             },
         });
     }
