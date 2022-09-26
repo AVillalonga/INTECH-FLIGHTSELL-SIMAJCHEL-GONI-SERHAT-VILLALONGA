@@ -15,3 +15,5 @@
   
     1/ Lancer la commande `npm install`  
     2/ Lancer la commande `npm run dev`  
+
+**Aller sur localhost:5173** 
