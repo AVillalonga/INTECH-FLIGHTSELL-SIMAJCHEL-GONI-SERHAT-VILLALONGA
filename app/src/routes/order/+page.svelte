@@ -2,45 +2,34 @@
     <h2>Thanks for traveling with us</h2>
     Here is a recap of your order
 
-    <div class="list-group">
+    {#if tickets.length != 0}
+        <div class="list-group">
+            <h6 class="list-group-item">Order passed at {order.created_at} </h6>
 
-        <a href="#" class="list-group-item list-group-item-action">
-            <div class="d-flex w-100 justify-content-between">
-                <h6 class="mb-1">PRS - CDG</h6>
-                <small class="text-muted">400e</small>
-            </div>
-            <small>With the following options</small>
-            <div class="d-flex w-100 justify-content-between">
-                <small class="text-muted">Champagnes</small>
-                <small class="text-muted">30e</small>
-            </div>
-        </a>
-       
-        {#each flights as flight}
-            <a href="#" class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">
-                        {flight.location_flight_departure_idTolocation.name} - {flight.location_flight_destination_idTolocation.name}
-                    </h6>
-                    <small class="text-muted">{flight.price}€</small>
-                </div>
-                {#if flight.flight_option.length > 0}
-                    <small>With the following options</small>
-                {/if}
-                <div class="d-flex w-100 justify-content-between">
-                    {#each flight.flight_option as { option, price, checked }, i}
-                        {#if checked}
-                            <small class="text-muted">{option}</small>
-                            <small class="text-muted">{price}€</small>
+            {#each tickets as ticket}
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">
+                            {ticket.departure} - {ticket.destination}
+                        </h6>
+                        <small class="text-muted">{parseFloat(ticket.price) * (ticket.hasOwnProperty('devise') ? parseFloat(ticket.devise.value) : 1)} {(ticket.hasOwnProperty('devise') ? ticket.devise.name : "€")}</small>
+                    </div>
+                    {#if ticket.ticket_option.filter(opt => opt.checked).length > 0}
+                        <small>With the following options</small>
+                    {/if}
+                    {#each ticket.ticket_option as option}
+                        {#if option.checked}
+                            <div class="d-flex w-100 justify-content-between">
+                                <small class="text-muted">{option.name}</small>
+                                <small class="text-muted">{option.value} { option.isPercent === 0 ? 'euros' : '%' }</small>
+                            </div>
                         {/if}
                     {/each}
-                </div>
-            </a>
-        {/each}
+                </a>
+            {/each}
+        </div>
+    {/if}
 
-       
-    
-      </div>
 
 
 
@@ -51,16 +40,25 @@
 </div>
 
 <script>
-    import { savedFlight } from '../../store.js';
+    import { getOrderRecap, orderId, savedFlight } from '../../store.js';
+    import { onMount } from "svelte";
+
     // Data
 
-    let flights = [];
+    let tickets = [];
+    let order;
 
-	savedFlight.subscribe(value => {
-        if(Object.prototype.toString.call(value) === '[object Array]') {
-            flights = [...value];
-        }
-	});
+
+    console.log($orderId);
+
+    onMount(async () => {
+        order = await getOrderRecap($orderId);
+        tickets = order.tickets
+        console.log(order);
+    });
+
+
+    
 </script>
 
 <style>

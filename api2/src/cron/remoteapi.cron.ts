@@ -4,7 +4,6 @@ import axios from "axios";
 export async function cronPushLocalPlanesToBroder() {
     const sourceUrl: string = process.env["REMOTE_URL"]!;
     const sourceKey: string = process.env["REMOTE_KEY"]!;
-    console.log(sourceUrl, sourceKey);
 
     const flights = await PrismaService.flight.findMany({
         select: {
@@ -55,7 +54,7 @@ export async function cronPushLocalPlanesToBroder() {
                 return {
                     name: opt.name,
                     code: opt.name,
-                    price: parseFloat(opt.value),
+                    price: opt.value,
                 };
             }),
             stop_overs: [], // TODO

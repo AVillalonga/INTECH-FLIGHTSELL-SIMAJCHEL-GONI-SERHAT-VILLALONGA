@@ -54,6 +54,7 @@ model eur_rate {
   SGD        String   @db.VarChar(32)
   THB        String   @db.VarChar(32)
   ZAR        String   @db.VarChar(32)
+  order      order[]
 }
 
 model flight {
@@ -110,13 +111,16 @@ model location {
 }
 
 model order {
-  id               Int      @id @default(autoincrement())
-  user             Int
-  created_at       DateTime @default(now()) @db.Timestamp(0)
-  user_orderTouser user     @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_ibfk_1")
-  ticket           ticket[]
+  id                       Int      @id @default(autoincrement())
+  user                     Int
+  created_at               DateTime @default(now()) @db.Timestamp(0)
+  eur_rate                 Int
+  user_orderTouser         user     @relation(fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_ibfk_1")
+  eur_rate_eur_rateToorder eur_rate @relation(fields: [eur_rate], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_ibfk_2")
+  ticket                   ticket[]
 
   @@index([user], map: "user")
+  @@index([eur_rate], map: "eur_rate")
 }
 
 model ticket {
