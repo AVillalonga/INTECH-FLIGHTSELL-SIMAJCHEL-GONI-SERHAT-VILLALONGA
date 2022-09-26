@@ -1,30 +1,14 @@
-## TODO
+## Déploiement :
 
-    * Détruire votre database
-    * Recréer votre basse
-    * Passer le dump => `mysql -u <username> -p flight_sell < ./api/sql/2022-09-15-19-23-origin.sql`
-    * Voir dans l'api
-    * Voir dans la home page du front
-    * !!! Ajouter des insertions par défault dans les tables de locations et d'avions !!!
-
-## 1) Commandes
-
-`npx prisma introspect` - Crée le 'prisma.schema'
-`npx prisma generate` - Regénérer les modèles prisma
-
-## 2) Breaking and Change Log [*]
-
-**Script SQL**
-
-    * Plus de pluriels dans les noms des tables
-    * Plus de descriptif des id inutiles
-    * Renommage de la table: User => Customer
-    * Ajout d'une contrainte unique sur la mail
-
-**Build**
-
-    * Ajout de la génération des modèles au moment du lancement du serveur (script `start`)
-
-**API**
-
-    * Renommage des endpoints en /flights et /order
+**Côté api :**
+    1/ Installer votre base MySQL 
+    2/ Crée une base de donnée s'appelant `flight_sell`
+    3/ Importer les données du fichier INTECH-FLIGHTSELL-SIMAJCHEL-GONI-SERHAT-VILLALONGA\api2\src\sql\origin.sql dans la base de donnée crée précedemment
+    4/ Lancer la commande `npm install`
+    5/ Insérer l'accès à la bdd dans le .env
+    6/ Lancer la commande `npx prisma introspect` (Crée le 'prisma.schema')
+    7/ Lancer la commande `npx prisma pull` et `npx prisma generate` (Regénérer les modèles prisma)
+    8/ Lancer `npm run dev`
+**Côté application**
+    1/ Lancer la commande `npm install`
+    2/ Lancer la commande `npm run dev`
