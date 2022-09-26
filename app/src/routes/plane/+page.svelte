@@ -22,6 +22,7 @@
         const customerInfo = {
             name : name,
             mail : email,
+            currency: flights[0].hasOwnProperty('devise') ? flights[0].devise.name : "EUR"
         };
         console.log(flights);
         

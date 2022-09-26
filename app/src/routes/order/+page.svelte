@@ -2,20 +2,22 @@
     <h2>Thanks for traveling with us</h2>
     Here is a recap of your order
 
-    {#if order}
+    {#if tickets.length != 0}
         <div class="list-group">
-            {#each flights as flight}
-            <a href="#" class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">
-                        {flight.departure} - {flight.destination}
-                    </h6>
-                    <small class="text-muted">{parseFloat(flight.price) * (flight.hasOwnProperty('devise') ? parseFloat(flight.devise.value) : 1)} {(flight.hasOwnProperty('devise') ? flight.devise.name : "€")}</small>
-                </div>
-                {#if flight.options.filter(opt => opt.checked).length > 0}
-                    <small>With the following options</small>
-                {/if}
-                    {#each flight.options as option}
+            <h6 class="list-group-item">Order passed at {order.created_at} </h6>
+
+            {#each tickets as ticket}
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">
+                            {ticket.departure} - {ticket.destination}
+                        </h6>
+                        <small class="text-muted">{parseFloat(ticket.price) * (ticket.hasOwnProperty('devise') ? parseFloat(ticket.devise.value) : 1)} {(ticket.hasOwnProperty('devise') ? ticket.devise.name : "€")}</small>
+                    </div>
+                    {#if ticket.ticket_option.filter(opt => opt.checked).length > 0}
+                        <small>With the following options</small>
+                    {/if}
+                    {#each ticket.ticket_option as option}
                         {#if option.checked}
                             <div class="d-flex w-100 justify-content-between">
                                 <small class="text-muted">{option.name}</small>
@@ -23,11 +25,8 @@
                             </div>
                         {/if}
                     {/each}
-            </a>
-        {/each}
-        
-        
-        
+                </a>
+            {/each}
         </div>
     {/if}
 
@@ -46,20 +45,15 @@
 
     // Data
 
-    let flights = [];
+    let tickets = [];
     let order;
 
-    console.log($orderId);
-    
 
-	savedFlight.subscribe(value => {
-        if(Object.prototype.toString.call(value) === '[object Array]') {
-            flights = [...value];
-        }
-	});
+    console.log($orderId);
 
     onMount(async () => {
         order = await getOrderRecap($orderId);
+        tickets = order.tickets
         console.log(order);
     });
 
