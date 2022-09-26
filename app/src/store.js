@@ -36,9 +36,6 @@ export async function send_user(username, usermail) {
 }
 
 export async function sendOrder(customerInfo, flights) {
-    // const body = new FormData();
-    // body.append("customerInfo", {...customerInfo});
-    // body.append("flights", flights.map(f => f.id));
     let prepareFlights = flights.map((f) => {
         return {
             reference: f.reference,

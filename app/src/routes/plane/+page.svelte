@@ -5,10 +5,10 @@
     let flights = [];
     let tickets = [];
 
-    let name = "tot"
+    let name = "your name"
     let age
-    let email = "t@t.fr"
-    let totalPrice = "processing..."
+    let email = "your email"
+    let totalPrice = "processing"
 
 	savedFlight.subscribe(async value =>  {
         if(Object.prototype.toString.call(value) === '[object Array]') {
@@ -74,14 +74,8 @@
         </div>
         <input type="email" bind:value={email} class="form-control" placeholder="email" aria-label="email">
 
-        <!--
-        <label>
-            Enter your birthday:
-            <input type="date" name="bday" />
-        </label>
-        -->
-
         <br>
+        
         <button type=submit class="btn btn-primary">
             Validate, Pay and Get my tickets
         </button>
