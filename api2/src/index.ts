@@ -1,6 +1,7 @@
 import Fastify, { FastifyInstance } from "fastify";
 
 import cors from "@fastify/cors";
+import { cronPushLocalPlanesToBroder } from "./cron/remoteapi.cron.js";
 import dbService from "./services/db.service.js";
 import { config as dotEnvConfig } from "dotenv";
 import fastifyCron from "fastify-cron";
@@ -26,6 +27,11 @@ async function boot() {
             {
                 cronTime: "*/10 * * * *",
                 onTick: syncOpenApiFlights,
+                runOnInit: true
+            },
+            {
+                cronTime: "*/10 * * * *",
+                onTick: cronPushLocalPlanesToBroder,
                 runOnInit: true
             }
         ],

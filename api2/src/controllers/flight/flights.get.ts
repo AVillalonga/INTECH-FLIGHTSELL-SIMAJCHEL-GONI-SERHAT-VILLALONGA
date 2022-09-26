@@ -16,7 +16,6 @@ export const flightsSchema = {
 export async function flights(req: any, rep: any) {
     const localFlights = await flightService.getAvailableFlights();
     const remoteFlights = await flightRemoteService.fetchRemotePlanes();
-    
     const flights = [...parseFlightsToDTO(localFlights), ...remoteFlights];
     rep.send({ flights });
 }

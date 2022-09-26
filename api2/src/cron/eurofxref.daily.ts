@@ -1,9 +1,10 @@
 import { PrismaService } from "../services/prisma.service.js";
 import { XMLParser } from "fast-xml-parser";
 import axios from "axios";
+import { eur_rate } from "@prisma/client";
 
 export async function fetchEurofxref() {
-    const response = await axios.get(process.env['EUR_RATE_URL']!);
+    const response = await axios.get(process.env["EUR_RATE_URL"]!);
     const parser = new XMLParser({ ignoreAttributes: false });
     const body = parser.parse(response.data);
     const values = body["gesmes:Envelope"].Cube.Cube.Cube;
@@ -20,7 +21,7 @@ export async function fetchEurofxref() {
     const record = await PrismaService.eur_rate.findMany({
         where: {
             created_at: {
-                gt: yesterday 
+                gt: yesterday,
             },
         },
     });
@@ -68,9 +69,22 @@ export async function fetchEurofxref() {
     }
 }
 
-function fmtDate(date: Date) {
+export function fmtDate(date: Date) {
     date.setHours(0);
     date.setMinutes(0);
     date.setSeconds(1);
     date.setMilliseconds(0);
+}
+
+export async function getLastRate(): Promise<eur_rate> {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    fmtDate(yesterday);
+    return await PrismaService.eur_rate.findFirstOrThrow({
+        where: {
+            created_at: {
+                gt: yesterday,
+            },
+        },
+    })!;
 }
